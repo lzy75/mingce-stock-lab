@@ -14,9 +14,14 @@ jobs:
           node-version: "24"
       - name: Verify actual public origin and real cases
         run: node scripts/verify-production.mjs
+      - name: Verify public AI/data endpoints and failure boundaries
+        run: node scripts/check-web.mjs
+        env:
+          MINGCE_TEST_URL: https://mingce-stock-lab.justslug1.chatgpt.site
+          MINGCE_TEST_REPORT: artifacts/production-http.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: production-acceptance
-          path: artifacts/production-acceptance.json
+          path: artifacts/*.json
           retention-days: 30
