@@ -174,6 +174,8 @@ test("SuperMind脚本仅新建自选板块、不含交易指令且可追溯", ()
     conditions,
   );
   const s = supermindScript(conditions, run, "明策测试");
+  assert.ok(s.includes("from mindgo_api import custom_sector"));
+  assert.ok(s.includes("print(custom_sector(name=SECTOR_NAME))"));
   assert.ok(s.includes("action='insert'"));
   assert.ok(s.includes("600519.SH"));
   assert.ok(s.includes("snapshotId"));

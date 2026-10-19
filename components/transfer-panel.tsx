@@ -140,7 +140,7 @@ export default function TransferPanel({
             </div>
             <div className="transfer-boundary">
               <ShieldCheck size={15} />
-              <p>账户自动同步未开放：当前 MCP 只有数据读取权限。</p>
+              <p>本站账户自动同步尚未接通；当前扶摇数据 MCP 仅提供读取。</p>
             </div>
           </>
         ) : (
@@ -212,6 +212,50 @@ export default function TransferPanel({
             )}
           </>
         )}
+        <details className="supermind-guide">
+          <summary>如何打开 SuperMind 研究环境？</summary>
+          <ol>
+            <li>
+              打开{" "}
+              <a
+                href="https://quant.10jqka.com.cn/view/study-research.html"
+                target="_blank"
+                rel="noreferrer"
+              >
+                SuperMind 研究环境入口 ↗
+              </a>
+              ，在右上角登录同花顺账号。
+            </li>
+            <li>
+              从导航“我的研究 → 研究环境”进入；若出现环境选择，选择可用的 Python
+              3 环境并启动。
+            </li>
+            <li>
+              看到文件列表后，点击“新建 / New → Python 3”，打开带代码单元格的
+              Notebook。
+            </li>
+            <li>
+              先运行下方只读查询，确认当前账户可使用自选板块功能。再导入本站脚本，运行后查询新板块名称并核对股票代码。
+            </li>
+          </ol>
+          <pre>
+            {
+              "from mindgo_api import custom_sector\ncustom_sector()  # 查询当前账户的自选板块"
+            }
+          </pre>
+          <p>
+            看到 Python Notebook
+            即为研究环境。若提示无权限或环境不可用，请先按平台提示处理；本站尚未验证该账户与手机/PC
+            自选互通。
+          </p>
+          <a
+            href="https://quant.10jqka.com.cn/view/help/14"
+            target="_blank"
+            rel="noreferrer"
+          >
+            官方研究环境教程 ↗
+          </a>
+        </details>
         {message && (
           <div role="status" className="transfer-message">
             {message}

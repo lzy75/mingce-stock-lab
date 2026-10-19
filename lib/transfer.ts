@@ -44,7 +44,7 @@ export function supermindScript(
     snapshotId: run.snapshotId,
     note: "只记录本次筛选条件和快照标识，不保证同花顺重新筛选口径完全相同。",
   });
-  return `# 明策 → 同花顺 SuperMind 自选板块接续脚本\n# 需用户在已登录、有权限的SuperMind研究环境中检查后运行。\n# 仅新建自选板块；不调用下单、交易或覆盖已有板块接口。\n# 官方API: https://quant.10jqka.com.cn/view/help/4#custom_sector\nimport json\nSTRATEGY = json.loads(${JSON.stringify(spec)})\nSYMBOLS = ${JSON.stringify(codes)}\nSECTOR_NAME = ${JSON.stringify(sector.trim())}\n\n# 若名称已存在，创建应失败；请换新名称，不自动覆盖。\ncustom_sector(name=SECTOR_NAME, action='insert', symbol=SYMBOLS)\nprint('请在SuperMind自选板块中核验名称和股票列表。')\n`;
+  return `# 明策 → 同花顺 SuperMind 自选板块接续脚本\n# 需用户在已登录、有权限的SuperMind研究环境中检查后运行。\n# 仅新建自选板块；不调用下单、交易或覆盖已有板块接口。\n# 官方API: https://quant.10jqka.com.cn/view/help/4#custom_sector\nimport json\nfrom mindgo_api import custom_sector\nSTRATEGY = json.loads(${JSON.stringify(spec)})\nSYMBOLS = ${JSON.stringify(codes)}\nSECTOR_NAME = ${JSON.stringify(sector.trim())}\n\n# 若名称已存在，创建应失败；请换新名称，不自动覆盖。\ncustom_sector(name=SECTOR_NAME, action='insert', symbol=SYMBOLS)\nprint(custom_sector(name=SECTOR_NAME))\nprint('请核对返回的板块名称和股票代码；此处未验证手机/PC自选互通。')\n`;
 }
 export function transferManifest(conditions: Condition[], run: Run | null) {
   const current =

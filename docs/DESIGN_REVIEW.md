@@ -45,3 +45,18 @@ Top three problems (most visible first), each with the screenshot it shows in an
 3. 现金流案例股票待核数为0但存在2项字段待核易混淆：显示待核条件数量和具体原因，保留排除优先逻辑。
 
 最终检查：默认桌面1280、平板768、手机390；页面宽度与视口一致，手机标题两行、输入和主操作可见。保留夜间/日间、密度和动态设置。源码lint为0 FAIL、9 WARN；旧样式中的eyebrow选择器不表示新页面增加标签，浮层与焦点阴影保留，旧研究设置浮层的blur本轮未改动。没有伪称inspect分数或外部设计评审结果。
+
+## 本轮单版面主线复核
+继续Accent ladder、seed986203714、蓝/赭橙，无重抽。按用户要求取消双输入和左右导览，主输入宽度1114px、文字区域高128px；下方横向条件卡片，再到名单与证据。手机输入文字区域290×170px，主操作可见。768平板输出改为单列，修复旧grid-column产生的隐式窄列。
+ROUND 2（主观自评）
+Seen in one second: 在醒目的大输入框描述选股想法。
+Idea (one sentence): 用户输入成为整页主线起点，条件、名单与证据按阅读顺序回应它。
+Live thing: 同一输入驱动真实AI解析与下方筛选，研究池自动分批读取。
+Layout words by section: input=宽大单输入 / conditions=横向可编辑条件 / output=名单与证据。
+Scores: design 7.5 · usability 8.5 · creativity 7 · content 8 → overall 7.8
+Caps applied: 金融工具按应用规范保留表单及表格边框；用户明确要求保留蓝/橙色。未运行技能自带浏览器inspect。
+Top three problems (most visible first), each with the screenshot it shows in and the fix:
+1. 上版双输入争夺注意力：本轮桌面截图仅一个输入框。
+2. 768截图证据被旧grid-column挤为窄列：修复并截图确认输出列宽724px。
+3. 新Notebook直接查询可能缺API导入：指引和导出脚本均补全导入与回读。
+源码lint为0 FAIL、9项旧样式WARN；浏览器实际复核1280/768/390，无页面横向溢出，最终视口已恢复默认。

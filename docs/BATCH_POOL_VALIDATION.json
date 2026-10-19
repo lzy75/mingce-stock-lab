@@ -1,0 +1,255 @@
+{
+  "at": "2026-10-19T13:03:37.233Z",
+  "environment": "local HTTP, actual Fuyao MCP",
+  "requested": 24,
+  "received": 24,
+  "batches": 2,
+  "progress": [
+    {
+      "completed": 0,
+      "total": 2,
+      "stocksDone": 0,
+      "stocksTotal": 24
+    },
+    {
+      "completed": 1,
+      "total": 2,
+      "stocksDone": 20,
+      "stocksTotal": 24
+    },
+    {
+      "completed": 2,
+      "total": 2,
+      "stocksDone": 24,
+      "stocksTotal": 24
+    }
+  ],
+  "counts": {
+    "pass": 20,
+    "fail": 3,
+    "unknown": 1
+  },
+  "trace": [
+    {
+      "code": "600519.SH",
+      "name": "贵州茅台",
+      "quality": "ok",
+      "asOf": "2026-10-19T13:03:36.000Z",
+      "transport": "MCP",
+      "tool": "get_a_share_valuations_snapshot",
+      "requestId": "ae5a004c49044ffd896e3d7f25762541"
+    },
+    {
+      "code": "000858.SZ",
+      "name": "五粮液",
+      "quality": "ok",
+      "asOf": "2026-10-19T13:03:36.000Z",
+      "transport": "MCP",
+      "tool": "get_a_share_valuations_snapshot",
+      "requestId": "ae5a004c49044ffd896e3d7f25762541"
+    },
+    {
+      "code": "600036.SH",
+      "name": "招商银行",
+      "quality": "ok",
+      "asOf": "2026-10-19T13:03:36.000Z",
+      "transport": "MCP",
+      "tool": "get_a_share_valuations_snapshot",
+      "requestId": "ae5a004c49044ffd896e3d7f25762541"
+    },
+    {
+      "code": "000333.SZ",
+      "name": "美的集团",
+      "quality": "ok",
+      "asOf": "2026-10-19T13:03:36.000Z",
+      "transport": "MCP",
+      "tool": "get_a_share_valuations_snapshot",
+      "requestId": "ae5a004c49044ffd896e3d7f25762541"
+    },
+    {
+      "code": "600900.SH",
+      "name": "长江电力",
+      "quality": "ok",
+      "asOf": "2026-10-19T13:03:36.000Z",
+      "transport": "MCP",
+      "tool": "get_a_share_valuations_snapshot",
+      "requestId": "ae5a004c49044ffd896e3d7f25762541"
+    },
+    {
+      "code": "601318.SH",
+      "name": "中国平安",
+      "quality": "ok",
+      "asOf": "2026-10-19T13:03:36.000Z",
+      "transport": "MCP",
+      "tool": "get_a_share_valuations_snapshot",
+      "requestId": "ae5a004c49044ffd896e3d7f25762541"
+    },
+    {
+      "code": "300750.SZ",
+      "name": "宁德时代",
+      "quality": "ok",
+      "asOf": "2026-10-19T13:03:36.000Z",
+      "transport": "MCP",
+      "tool": "get_a_share_valuations_snapshot",
+      "requestId": "ae5a004c49044ffd896e3d7f25762541"
+    },
+    {
+      "code": "600031.SH",
+      "name": "三一重工",
+      "quality": "ok",
+      "asOf": "2026-10-19T13:03:36.000Z",
+      "transport": "MCP",
+      "tool": "get_a_share_valuations_snapshot",
+      "requestId": "ae5a004c49044ffd896e3d7f25762541"
+    },
+    {
+      "code": "600887.SH",
+      "name": "伊利股份",
+      "quality": "ok",
+      "asOf": "2026-10-19T13:03:36.000Z",
+      "transport": "MCP",
+      "tool": "get_a_share_valuations_snapshot",
+      "requestId": "ae5a004c49044ffd896e3d7f25762541"
+    },
+    {
+      "code": "002415.SZ",
+      "name": "海康威视",
+      "quality": "ok",
+      "asOf": "2026-10-19T13:03:36.000Z",
+      "transport": "MCP",
+      "tool": "get_a_share_valuations_snapshot",
+      "requestId": "ae5a004c49044ffd896e3d7f25762541"
+    },
+    {
+      "code": "601899.SH",
+      "name": "紫金矿业",
+      "quality": "ok",
+      "asOf": "2026-10-19T13:03:36.000Z",
+      "transport": "MCP",
+      "tool": "get_a_share_valuations_snapshot",
+      "requestId": "ae5a004c49044ffd896e3d7f25762541"
+    },
+    {
+      "code": "600276.SH",
+      "name": "恒瑞医药",
+      "quality": "ok",
+      "asOf": "2026-10-19T13:03:36.000Z",
+      "transport": "MCP",
+      "tool": "get_a_share_valuations_snapshot",
+      "requestId": "ae5a004c49044ffd896e3d7f25762541"
+    },
+    {
+      "code": "600000.SH",
+      "name": "浦发银行",
+      "quality": "ok",
+      "asOf": "2026-10-19T13:03:36.000Z",
+      "transport": "MCP",
+      "tool": "get_a_share_valuations_snapshot",
+      "requestId": "ae5a004c49044ffd896e3d7f25762541"
+    },
+    {
+      "code": "600004.SH",
+      "name": "白云机场",
+      "quality": "ok",
+      "asOf": "2026-10-19T13:03:36.000Z",
+      "transport": "MCP",
+      "tool": "get_a_share_valuations_snapshot",
+      "requestId": "ae5a004c49044ffd896e3d7f25762541"
+    },
+    {
+      "code": "600009.SH",
+      "name": "上海机场",
+      "quality": "ok",
+      "asOf": "2026-10-19T13:03:36.000Z",
+      "transport": "MCP",
+      "tool": "get_a_share_valuations_snapshot",
+      "requestId": "ae5a004c49044ffd896e3d7f25762541"
+    },
+    {
+      "code": "600010.SH",
+      "name": "包钢股份",
+      "quality": "ok",
+      "asOf": "2026-10-19T13:03:36.000Z",
+      "transport": "MCP",
+      "tool": "get_a_share_valuations_snapshot",
+      "requestId": "ae5a004c49044ffd896e3d7f25762541"
+    },
+    {
+      "code": "600011.SH",
+      "name": "华能国际",
+      "quality": "ok",
+      "asOf": "2026-10-19T13:03:36.000Z",
+      "transport": "MCP",
+      "tool": "get_a_share_valuations_snapshot",
+      "requestId": "ae5a004c49044ffd896e3d7f25762541"
+    },
+    {
+      "code": "600015.SH",
+      "name": "华夏银行",
+      "quality": "ok",
+      "asOf": "2026-10-19T13:03:36.000Z",
+      "transport": "MCP",
+      "tool": "get_a_share_valuations_snapshot",
+      "requestId": "ae5a004c49044ffd896e3d7f25762541"
+    },
+    {
+      "code": "600016.SH",
+      "name": "民生银行",
+      "quality": "ok",
+      "asOf": "2026-10-19T13:03:36.000Z",
+      "transport": "MCP",
+      "tool": "get_a_share_valuations_snapshot",
+      "requestId": "ae5a004c49044ffd896e3d7f25762541"
+    },
+    {
+      "code": "600018.SH",
+      "name": "上港集团",
+      "quality": "ok",
+      "asOf": "2026-10-19T13:03:36.000Z",
+      "transport": "MCP",
+      "tool": "get_a_share_valuations_snapshot",
+      "requestId": "ae5a004c49044ffd896e3d7f25762541"
+    },
+    {
+      "code": "600019.SH",
+      "name": "宝钢股份",
+      "quality": "ok",
+      "asOf": "2026-10-19T13:03:37.000Z",
+      "transport": "MCP",
+      "tool": "get_a_share_valuations_snapshot",
+      "requestId": "8b19b1e7fcfe47328ab28799f4cd42a7"
+    },
+    {
+      "code": "600025.SH",
+      "name": "华能水电",
+      "quality": "ok",
+      "asOf": "2026-10-19T13:03:37.000Z",
+      "transport": "MCP",
+      "tool": "get_a_share_valuations_snapshot",
+      "requestId": "8b19b1e7fcfe47328ab28799f4cd42a7"
+    },
+    {
+      "code": "600028.SH",
+      "name": "中国石化",
+      "quality": "ok",
+      "asOf": "2026-10-19T13:03:37.000Z",
+      "transport": "MCP",
+      "tool": "get_a_share_valuations_snapshot",
+      "requestId": "8b19b1e7fcfe47328ab28799f4cd42a7"
+    },
+    {
+      "code": "600029.SH",
+      "name": "南方航空",
+      "quality": "ok",
+      "asOf": "2026-10-19T13:03:37.000Z",
+      "transport": "MCP",
+      "tool": "get_a_share_valuations_snapshot",
+      "requestId": "8b19b1e7fcfe47328ab28799f4cd42a7"
+    }
+  ],
+  "issues": [
+    "研究范围仅限所列股票，不代表全A股；未做ST、停牌、行业或新股排除。",
+    "行情与估值时点是各响应批次的最大上游时间，接口未提供逐股时间；不宣称逐股实时。",
+    "研究池分批读取（2批），批次时点可能不同；每项证据保留自身来源和时点。全部批次完成后才生成名单。"
+  ]
+}

@@ -66,12 +66,11 @@ test("成功响应保留请求ID；item缺失不当作空结果", async () => {
   assert.equal(r.request_id, "trace");
   assert.throws(() => items({ code: 0, data: {} }), /item/);
 });
-test("代码限制防任意URL/超出配额，且去重", () => {
+test("代码格式防任意URL，研究池不再受20只限制且去重", () => {
   assert.deepEqual(parseCodes(["600519.SH", "600519.SH"]), ["600519.SH"]);
   for (const v of [
     [],
     ["http://localhost"],
-    Array(21).fill("600519.SH"),
     ["DEMO-01"],
   ])
     assert.throws(() => parseCodes(v));

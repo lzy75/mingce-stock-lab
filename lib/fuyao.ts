@@ -11,20 +11,7 @@ import {
 } from "./domain.ts";
 import { FuyaoMcp, mcpArguments } from "./mcp-client.ts";
 export const FUYAO_ORIGIN = "https://fuyao.aicubes.cn";
-export const DEFAULT_CODES = [
-  "600519.SH",
-  "000858.SZ",
-  "600036.SH",
-  "000333.SZ",
-  "600900.SH",
-  "601318.SH",
-  "300750.SZ",
-  "600031.SH",
-  "600887.SH",
-  "002415.SZ",
-  "601899.SH",
-  "600276.SH",
-];
+export { DEFAULT_CODES, parseCodes } from "./research-pool.ts";
 export class DataError extends Error {
   code: string;
   requestId?: string;
@@ -102,20 +89,6 @@ export function items(envelope: Envelope): Raw[] {
       envelope.request_id,
     );
   return envelope.data.item.filter((x) => x && typeof x === "object");
-}
-export function parseCodes(value: unknown): string[] {
-  if (value === undefined) return DEFAULT_CODES;
-  if (
-    !Array.isArray(value) ||
-    !value.length ||
-    value.length > 20 ||
-    value.some((x) => typeof x !== "string" || !/^\d{6}\.(SH|SZ|BJ)$/.test(x))
-  )
-    throw new DataError(
-      "研究池需包含1—20个标准A股代码，例如600519.SH。",
-      "INVALID_CODES",
-    );
-  return [...new Set(value)];
 }
 function iso(value: unknown): string | null {
   const n = metricValue(value);

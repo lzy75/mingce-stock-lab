@@ -1,13 +1,21 @@
 import { loadMarket, parseCodes, DataError } from "@/lib/fuyao";
+import { MARKET_BATCH_SIZE } from "@/lib/research-pool";
 import { METRICS, type Metric } from "@/lib/domain";
 import { serverEnv } from "@/lib/runtime-env";
 import { gate, json, readBody, RequestError } from "@/lib/http";
 export async function POST(request: Request) {
-  const blocked = gate(request, 8);
+  const blocked = gate(request, 30);
   if (blocked) return blocked;
   try {
     const body = await readBody(request);
     const codes = parseCodes(body.codes);
+    if (codes.length > MARKET_BATCH_SIZE)
+      return json(
+        {
+          error: `单批最多${MARKET_BATCH_SIZE}只；网页将自动分批读取完整研究池。`,
+        },
+        400,
+      );
     const metrics = body.metrics ?? Object.keys(METRICS);
     if (
       !Array.isArray(metrics) ||

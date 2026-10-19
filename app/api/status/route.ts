@@ -11,7 +11,7 @@ export async function GET() {
     aiKeyPresent: !!serverEnv("AI_API_KEY"),
     aiModel: serverEnv("AI_MODEL") || null,
     provider: "扶摇 / 同花顺",
-    scope: "自选研究池，最多20只",
+    scope: "自选研究池，自动分批读取，不设20只总量上限",
     time: new Date().toISOString(),
   });
 }

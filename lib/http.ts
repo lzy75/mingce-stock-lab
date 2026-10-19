@@ -20,8 +20,14 @@ export function gate(request: Request, limit = 30): Response | null {
     current = { start: now, count: 0 };
     requests.set(key, current);
   }
-  if (++current.count > limit)
-    return json({ error: "请求过于频繁，请一分钟后重试" }, 429);
+  if (++current.count > limit) {
+    const response = json({ error: "请求过于频繁，请稍后重试" }, 429);
+    response.headers.set(
+      "Retry-After",
+      String(Math.max(1, Math.ceil((current.start + 60000 - now) / 1000))),
+    );
+    return response;
+  }
   if (requests.size > 1000) requests.clear();
   return null;
 }

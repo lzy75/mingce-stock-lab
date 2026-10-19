@@ -34,3 +34,10 @@
 [最终生产验收通过](https://github.com/lzy75/mingce-stock-lab/actions/runs/39254655619)：三场景真实链路及10项公开HTTP验收全部通过，包括真实POST /api/parse、POST /api/market、错单位/未知条件、非法JSON、非法研究池、空指标及预期跨站403。
 最新三场景验收ID：cdaa4e8c-eade-4f58-b47b-16655cd75279。公开双接口报告：[PRODUCTION_HTTP_GITHUB.json](PRODUCTION_HTTP_GITHUB.json)；三场景报告：[PRODUCTION_FINAL_ACCEPTANCE.json](PRODUCTION_FINAL_ACCEPTANCE.json)。字段不适用继续标记partial。
 [最终验证工作流源码CI通过](https://github.com/lzy75/mingce-stock-lab/actions/runs/39254631661)。
+
+## 单版面主线与研究池分批更新
+- 单一宽大输入框，条件核对、名单与证据依次在同页下方；手机和平板响应式已复核。
+- 股票研究池不设20只总量上限，20只仅是单次传输批量；分批进度、取消、429有界重试、完整覆盖检查均已实现。不是自动全市场筛选。
+- 本地真实24只MCP池分两批完整读取；45只构造池和异常回归包含于88项通过的自动测试。
+- SuperMind入口与Notebook具体步骤内置于导出面板；脚本补全mindgo_api导入与查询回读，Python语法检查通过，未执行账户写入。
+- GitHub生产验收已增加24只研究池批次检查；本次发布后的实际运行结果另外追加，不预先记为通过。

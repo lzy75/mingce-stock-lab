@@ -39,7 +39,8 @@ import {
   type Status,
 } from "@/lib/domain";
 import { demoSnapshot, examples } from "@/lib/fixtures";
-import { DEFAULT_CODES } from "@/lib/fuyao";
+import { DEFAULT_CODES, parsePoolText } from "@/lib/research-pool";
+import { loadMarketBatches, type BatchProgress } from "@/lib/market-batches";
 import type { Diagnostic } from "@/lib/diagnostics";
 import ExperimentStudio from "@/components/experiment-studio";
 import PreferenceBar from "@/components/preference-bar";
@@ -133,6 +134,14 @@ export default function Home() {
     [query, setQuery] = useState(""),
     [auto, setAuto] = useState(false);
   const [showTransfer, setShowTransfer] = useState(false);
+  const [batchProgress, setBatchProgress] = useState<BatchProgress | null>(
+    null,
+  );
+  const marketAbort = useRef<AbortController | null>(null);
+  useEffect(() => {
+    marketAbort.current?.abort();
+  }, [intent, conditions, mode, codes]);
+  useEffect(() => () => marketAbort.current?.abort(), []);
   const [focusedRule, setFocusedRule] = useState<string | null>(null);
   const version = useRef(0),
     scopeRef = useRef<HTMLTextAreaElement>(null),
@@ -298,30 +307,22 @@ export default function Home() {
           ));
       if (mode === "demo") next = demoSnapshot;
       else if (needs) {
-        const r = await fetch("/api/market", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            codes: codes
-              .toUpperCase()
-              .split(/[,，\s]+/)
-              .filter(Boolean),
-            metrics: [
-              ...new Set(
-                conditions.filter((c) => c.enabled).map((c) => c.metric),
-              ),
-            ],
-          }),
+        marketAbort.current?.abort();
+        const controller = new AbortController();
+        marketAbort.current = controller;
+        next = await loadMarketBatches({
+          codes: parsePoolText(codes),
+          metrics: [
+            ...new Set(
+              conditions.filter((c) => c.enabled).map((c) => c.metric),
+            ),
+          ],
+          signal: controller.signal,
+          isCurrent: () => v === version.current,
+          onProgress: (p) => {
+            if (v === version.current) setBatchProgress(p);
+          },
         });
-        const b = (await r.json()) as Snapshot & {
-          error?: string;
-          requestId?: string;
-        };
-        if (!r.ok)
-          throw Error(
-            `${b.error}${b.requestId ? " · 请求ID " + b.requestId : ""}`,
-          );
-        next = b;
       }
       if (v !== version.current || !next) return;
       const result = screen(next, conditions);
@@ -351,7 +352,10 @@ export default function Home() {
         setAuto(false);
       }
     } finally {
-      if (v === version.current) setBusy("");
+      if (v === version.current) {
+        setBusy("");
+        setBatchProgress(null);
+      }
     }
   }
   useEffect(() => {
@@ -413,22 +417,19 @@ export default function Home() {
     }
   }
   function applyScope() {
-    const value = [
-      ...new Set(
-        scopeDraft
-          .toUpperCase()
-          .split(/[,，\s]+/)
-          .filter(Boolean),
-      ),
-    ];
-    if (
-      !value.length ||
-      value.length > 20 ||
-      value.some((x) => !/^\d{6}\.(SH|SZ|BJ)$/.test(x))
-    ) {
-      setScopeError("请输入1—20个标准A股代码，例如600519.SH。");
+    let value: string[];
+    try {
+      value = parsePoolText(scopeDraft);
+    } catch (e) {
+      setScopeError(e instanceof Error ? e.message : "股票代码无效");
       return;
     }
+    version.current++;
+    marketAbort.current?.abort();
+    setBusy("");
+    setBatchProgress(null);
+    setAuto(false);
+    setCompare([]);
     setCodes(value.join(", "));
     setSnapshot(null);
     setRun(null);
@@ -472,7 +473,7 @@ export default function Home() {
                 if (n.id === "workspace")
                   requestAnimationFrame(() =>
                     document
-                      .getElementById("workbench")
+                      .getElementById("strategy-input")
                       ?.scrollIntoView({ behavior: "smooth" }),
                   );
               }}
@@ -501,7 +502,7 @@ export default function Home() {
                 setConfirmed(false);
                 setDirty(true);
               }}
-              busy={busy === "parse"}
+              busy={busy}
               onStart={() => {
                 void compile();
                 document
@@ -513,23 +514,6 @@ export default function Home() {
                 window.scrollTo({ top: 0 });
               }}
             />
-            <section className="intro" id="workbench">
-              <div>
-                <h2>策略研究台</h2>
-                <p>从研究想法到候选名单，保留每一步依据。</p>
-              </div>
-              <div className="workflow-cue">
-                <span
-                  className={intent.trim() !== parsed.intent ? "active" : ""}
-                >
-                  01 描述
-                </span>
-                <i />
-                <span className={dirty ? "active" : ""}>02 核对</span>
-                <i />
-                <span className={!dirty && run ? "active" : ""}>03 验证</span>
-              </div>
-            </section>
             <section className={`data-strip ${mode}`} aria-label="数据模式">
               <div className="mode-switch">
                 <button
@@ -588,274 +572,226 @@ export default function Home() {
                 setNotice("已基于主动偏好提出条件，请检查后确认。");
               }}
             />
-            <div className="workspace">
-              <aside className="strategy">
-                <section className="panel intent">
-                  <div className="section-title">研究想法</div>
-                  <label className="sr-only" htmlFor="intent">
-                    自然语言选股需求
-                  </label>
-                  <textarea
-                    id="intent"
-                    maxLength={2000}
-                    value={intent}
-                    onChange={(e) => {
-                      version.current++;
-                      setBusy("");
-                      setIntent(e.target.value);
-                      setConfirmed(false);
-                      setDirty(true);
-                    }}
-                  />
-                  <div className="input-meta">
-                    <span>{intent.length}/2000</span>
-                    <span>{Object.keys(METRICS).length}项可用指标</span>
+            <section
+              className="panel conditions flow-conditions"
+              id="workbench"
+              aria-label="条件核对输出"
+            >
+              <div className="section-title">
+                核对筛选条件
+                <small>{conditions.length} RULES</small>
+              </div>
+              <div className="engine">
+                ●{" "}
+                {parsed.engine === "model"
+                  ? `语言模型 · ${parsed.model}`
+                  : "本地语义规则"}
+                <span>全部条件同时满足</span>
+              </div>
+              {parsed.blocked ? (
+                <div className="callout danger">
+                  <ShieldCheck size={18} />
+                  <div>
+                    <b>这次请求不能直接执行</b>
+                    <p>{parsed.reason}</p>
                   </div>
-                  <button
-                    className="primary full"
-                    disabled={!!busy || !intent.trim()}
-                    onClick={() => void compile()}
-                  >
-                    {busy === "parse" ? (
-                      <LoaderCircle size={16} className="spin" />
-                    ) : (
-                      <Sparkles size={16} className="spark" />
-                    )}
-                    拆解为筛选条件
-                    <ArrowUpRight size={17} />
-                  </button>
-                  <label className="scenario-select">
-                    换一个研究场景
-                    <select
-                      aria-label="研究场景模板"
-                      value=""
-                      onChange={(e) => {
-                        const scene = researchScenarios.find(
-                          (s) => s.id === e.target.value,
-                        );
-                        if (scene) {
-                          version.current++;
-                          setIntent(scene.question);
-                          setBusy("");
-                          setConfirmed(false);
-                          setDirty(true);
-                          void compile(scene.question);
-                        }
-                      }}
-                    >
-                      <option value="" disabled>
-                        选择场景，AI 拆解条件
-                      </option>
-                      {researchScenarios.map((scene) => (
-                        <option key={scene.id} value={scene.id}>
-                          {scene.title}
-                        </option>
+                </div>
+              ) : (
+                <>
+                  {parsed.clarifications.length > 0 && (
+                    <details className="clarify">
+                      <summary>
+                        <CircleHelp size={14} />
+                        代理定义与阈值
+                        <ChevronDown size={12} />
+                      </summary>
+                      {parsed.clarifications.map((c, i) => (
+                        <p key={i}>{c}</p>
                       ))}
-                    </select>
-                  </label>
-                  <div className="quick">
-                    <span>试一个想法</span>
-                    {examples.slice(0, 3).map((e, i) => (
-                      <button key={e.id} onClick={() => example(e)}>
-                        {["经营改善", "明确阈值", "低估值"][i]}
-                        <ArrowUpRight size={10} />
-                      </button>
+                    </details>
+                  )}
+                  {intent.trim() !== parsed.intent && (
+                    <div className="state-banner">
+                      描述已修改，请先重新生成条件。
+                    </div>
+                  )}
+                  <div className="condition-list">
+                    {conditions.map((c, i) => (
+                      <div
+                        key={c.id}
+                        className={`condition ${!c.enabled ? "disabled" : ""}`}
+                      >
+                        <div className="condition-top">
+                          <input
+                            aria-label={`启用条件${i + 1}`}
+                            type="checkbox"
+                            checked={c.enabled}
+                            onChange={(e) =>
+                              edit(c.id, { enabled: e.target.checked })
+                            }
+                          />
+                          <small>{String(i + 1).padStart(2, "0")}</small>
+                          <select
+                            aria-label={`条件${i + 1}指标`}
+                            value={c.metric}
+                            onChange={(e) =>
+                              edit(c.id, {
+                                metric: e.target.value as Metric,
+                              })
+                            }
+                          >
+                            {Object.entries(METRICS).map(([k, m]) => (
+                              <option key={k} value={k}>
+                                {m.label}
+                              </option>
+                            ))}
+                          </select>
+                          <button
+                            className="icon"
+                            aria-label={`删除条件${i + 1}`}
+                            onClick={() => {
+                              version.current++;
+                              setBusy("");
+                              setConditions((cs) =>
+                                cs.filter((x) => x.id !== c.id),
+                              );
+                              setDirty(true);
+                              setConfirmed(false);
+                            }}
+                          >
+                            <X size={12} />
+                          </button>
+                        </div>
+                        <div className="condition-value">
+                          <select
+                            aria-label={`条件${i + 1}运算符`}
+                            value={c.op}
+                            onChange={(e) =>
+                              edit(c.id, {
+                                op: e.target.value as Condition["op"],
+                              })
+                            }
+                          >
+                            {OPS.map((op) => (
+                              <option key={op}>{op}</option>
+                            ))}
+                          </select>
+                          <input
+                            aria-label={`条件${i + 1}阈值`}
+                            type="number"
+                            step="any"
+                            value={Number.isFinite(c.value) ? c.value : ""}
+                            onChange={(e) =>
+                              edit(c.id, {
+                                value:
+                                  e.target.value === ""
+                                    ? NaN
+                                    : Number(e.target.value),
+                              })
+                            }
+                          />
+                          <span>{METRICS[c.metric].unit}</span>
+                        </div>
+                      </div>
                     ))}
                   </div>
-                </section>
-                <section className="panel conditions">
-                  <div className="section-title">
-                    核对筛选条件
-                    <small>{conditions.length} RULES</small>
-                  </div>
-                  <div className="engine">
-                    ●{" "}
-                    {parsed.engine === "model"
-                      ? `语言模型 · ${parsed.model}`
-                      : "本地语义规则"}
-                    <span>全部条件同时满足</span>
-                  </div>
-                  {parsed.blocked ? (
+                  <button
+                    className="add-condition"
+                    disabled={conditions.length >= 20}
+                    onClick={() => {
+                      version.current++;
+                      setBusy("");
+                      setConditions((cs) => [
+                        ...cs,
+                        {
+                          id: crypto.randomUUID(),
+                          metric: "pb",
+                          op: "<=",
+                          value: 3,
+                          enabled: true,
+                        },
+                      ]);
+                      setDirty(true);
+                      setConfirmed(false);
+                    }}
+                  >
+                    <Plus size={13} />
+                    添加条件
+                  </button>
+                  {conflicts.length > 0 && (
                     <div className="callout danger">
-                      <ShieldCheck size={18} />
+                      <AlertTriangle size={16} />
                       <div>
-                        <b>这次请求不能直接执行</b>
-                        <p>{parsed.reason}</p>
-                      </div>
-                    </div>
-                  ) : (
-                    <>
-                      {parsed.clarifications.length > 0 && (
-                        <details className="clarify">
-                          <summary>
-                            <CircleHelp size={14} />
-                            代理定义与阈值
-                            <ChevronDown size={12} />
-                          </summary>
-                          {parsed.clarifications.map((c, i) => (
-                            <p key={i}>{c}</p>
-                          ))}
-                        </details>
-                      )}
-                      {intent.trim() !== parsed.intent && (
-                        <div className="state-banner">
-                          描述已修改，请先重新生成条件。
-                        </div>
-                      )}
-                      <div className="condition-list">
-                        {conditions.map((c, i) => (
-                          <div
-                            key={c.id}
-                            className={`condition ${!c.enabled ? "disabled" : ""}`}
-                          >
-                            <div className="condition-top">
-                              <input
-                                aria-label={`启用条件${i + 1}`}
-                                type="checkbox"
-                                checked={c.enabled}
-                                onChange={(e) =>
-                                  edit(c.id, { enabled: e.target.checked })
-                                }
-                              />
-                              <small>{String(i + 1).padStart(2, "0")}</small>
-                              <select
-                                aria-label={`条件${i + 1}指标`}
-                                value={c.metric}
-                                onChange={(e) =>
-                                  edit(c.id, {
-                                    metric: e.target.value as Metric,
-                                  })
-                                }
-                              >
-                                {Object.entries(METRICS).map(([k, m]) => (
-                                  <option key={k} value={k}>
-                                    {m.label}
-                                  </option>
-                                ))}
-                              </select>
-                              <button
-                                className="icon"
-                                aria-label={`删除条件${i + 1}`}
-                                onClick={() => {
-                                  version.current++;
-                                  setBusy("");
-                                  setConditions((cs) =>
-                                    cs.filter((x) => x.id !== c.id),
-                                  );
-                                  setDirty(true);
-                                  setConfirmed(false);
-                                }}
-                              >
-                                <X size={12} />
-                              </button>
-                            </div>
-                            <div className="condition-value">
-                              <select
-                                aria-label={`条件${i + 1}运算符`}
-                                value={c.op}
-                                onChange={(e) =>
-                                  edit(c.id, {
-                                    op: e.target.value as Condition["op"],
-                                  })
-                                }
-                              >
-                                {OPS.map((op) => (
-                                  <option key={op}>{op}</option>
-                                ))}
-                              </select>
-                              <input
-                                aria-label={`条件${i + 1}阈值`}
-                                type="number"
-                                step="any"
-                                value={Number.isFinite(c.value) ? c.value : ""}
-                                onChange={(e) =>
-                                  edit(c.id, {
-                                    value:
-                                      e.target.value === ""
-                                        ? NaN
-                                        : Number(e.target.value),
-                                  })
-                                }
-                              />
-                              <span>{METRICS[c.metric].unit}</span>
-                            </div>
-                          </div>
+                        {conflicts.map((x, i) => (
+                          <p key={i}>{x}</p>
                         ))}
                       </div>
-                      <button
-                        className="add-condition"
-                        disabled={conditions.length >= 20}
-                        onClick={() => {
-                          version.current++;
-                          setBusy("");
-                          setConditions((cs) => [
-                            ...cs,
-                            {
-                              id: crypto.randomUUID(),
-                              metric: "pb",
-                              op: "<=",
-                              value: 3,
-                              enabled: true,
-                            },
-                          ]);
-                          setDirty(true);
-                          setConfirmed(false);
-                        }}
-                      >
-                        <Plus size={13} />
-                        添加条件
-                      </button>
-                      {conflicts.length > 0 && (
-                        <div className="callout danger">
-                          <AlertTriangle size={16} />
-                          <div>
-                            {conflicts.map((x, i) => (
-                              <p key={i}>{x}</p>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                      <label className="confirm">
-                        <input
-                          type="checkbox"
-                          checked={confirmed}
-                          onChange={(e) => setConfirmed(e.target.checked)}
-                        />
-                        我已检查指标、阈值与研究范围
-                      </label>
-                      <button
-                        className="primary full"
-                        disabled={
-                          !!busy ||
-                          !confirmed ||
-                          !!conflicts.length ||
-                          intent.trim() !== parsed.intent
-                        }
-                        onClick={() => void execute()}
-                      >
-                        {busy === "market" ? (
-                          <LoaderCircle size={15} className="spin" />
-                        ) : (
-                          <Play size={14} />
-                        )}
-                        确认并筛选
-                        <ArrowRight size={15} />
-                      </button>
-                    </>
+                    </div>
                   )}
-                  <p className="fineprint">
-                    代理阈值可修改；数据口径见右侧证据。
-                  </p>
-                </section>
-                <div className="sidebar-foot">
-                  <ShieldCheck size={16} />
-                  <p>
-                    只研究条件与证据
-                    <br />
-                    研究工具 · 非买卖建议
-                  </p>
+                  <label className="confirm">
+                    <input
+                      type="checkbox"
+                      checked={confirmed}
+                      onChange={(e) => setConfirmed(e.target.checked)}
+                    />
+                    我已检查指标、阈值与研究范围
+                  </label>
+                  <button
+                    className="primary full"
+                    disabled={
+                      !!busy ||
+                      !confirmed ||
+                      !!conflicts.length ||
+                      intent.trim() !== parsed.intent
+                    }
+                    onClick={() => void execute()}
+                  >
+                    {busy === "market" ? (
+                      <LoaderCircle size={15} className="spin" />
+                    ) : (
+                      <Play size={14} />
+                    )}
+                    确认并筛选
+                    <ArrowRight size={15} />
+                  </button>
+                </>
+              )}
+              <p className="fineprint">
+                代理阈值可修改；数据口径可在结果证据中核对。
+              </p>
+            </section>
+            {busy === "market" && batchProgress && (
+              <div className="batch-progress" role="status">
+                <div>
+                  <b>
+                    {batchProgress.retryAfter
+                      ? `接口限流，${batchProgress.retryAfter}秒后重试当前批次`
+                      : `正在读取第${Math.min(batchProgress.completed + 1, batchProgress.total)}/${batchProgress.total}批`}
+                  </b>
+                  <span>
+                    已核查 {batchProgress.stocksDone}/
+                    {batchProgress.stocksTotal}只 · 全部批次完成后输出名单
+                  </span>
+                  <progress
+                    max={batchProgress.stocksTotal}
+                    value={batchProgress.stocksDone}
+                  />
                 </div>
-              </aside>
+                <button
+                  className="outline"
+                  onClick={() => {
+                    version.current++;
+                    marketAbort.current?.abort();
+                    setBusy("");
+                    setBatchProgress(null);
+                    setNotice("已停止读取，本次部分批次不会生成新名单。");
+                  }}
+                >
+                  停止读取
+                </button>
+              </div>
+            )}
+            <div className="workspace research-output">
               <section className="results">
                 <div className="result-heading">
                   <div>
@@ -1284,9 +1220,7 @@ export default function Home() {
                         ? "正在读取并核查数据"
                         : "先确认条件，再查看结果"}
                     </h2>
-                    <p>
-                      从左侧描述想法、检查指标和阈值。遇到冲突或能力边界时，先处理再执行。
-                    </p>
+                    <p>在上方核对条件并确认执行，结果与证据会显示在这里。</p>
                     <button
                       className="text-button"
                       onClick={() => setTab("lab")}
@@ -1387,7 +1321,7 @@ export default function Home() {
                 [
                   "03",
                   "明确范围，不扩大结论",
-                  "默认12只A股研究池，可修改为最多20只，不代表全市场。首版不支持行业、ST、停牌、新股、资金、新闻、预测与回测。行情/估值缓存60秒，财报6小时、日线和日历1小时。读取最新不保证产生新时点。",
+                  "默认12只A股起步研究池，可粘贴更多代码；整体不设20只上限，自动分批读取，不代表全市场。首版不支持行业、ST、停牌、新股、资金、新闻、预测与回测。行情/估值缓存60秒，财报6小时、日线和日历1小时。读取最新不保证产生新时点。",
                 ],
                 [
                   "04",
@@ -1612,11 +1546,13 @@ export default function Home() {
 
             <h2 id="scope-title">定义你的研究范围</h2>
             <p>
-              最多20只A股，用逗号分隔。变更后重新取数；不自动排除ST、停牌或新股。
+              粘贴A股代码，支持逗号、空格或换行。自动去重、分批读取；不设20只总量上限。
             </p>
             <label htmlFor="scope">股票代码，例如600519.SH</label>
             <textarea
               id="scope"
+              rows={8}
+              placeholder="600519.SH，000333.SZ\n600036.SH，000858.SZ"
               ref={scopeRef}
               value={scopeDraft}
               onChange={(e) => setScopeDraft(e.target.value)}
