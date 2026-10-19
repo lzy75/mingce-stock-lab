@@ -33,4 +33,4 @@ MINGCE_TEST_URL=https://mingce-stock-lab.justslug1.chatgpt.site MINGCE_TEST_REPO
 本地需要先npm run dev。HTTP脚本覆盖配置、真实模型、显式条件不增减、错单位、附加未知要求、非法JSON、非法代码、空指标、跨站请求与真实MCP快照。
 入口非JSON/403、网络失败、超时与应用业务错误分开记录。部署成功、Key存在、HTTP200都不能单独代表整个链路通过。生产入口被环境访问层限制时保留失败记录，改用实际页面检查；不要把本地结果写成生产结果。
 
-本机CLI本次安装在`/Users/liziyue.22/.local/share/mingce-tools/gh_2.102.0_macOS_arm64/bin/gh`；若终端找不到gh，可使用这个绝对路径，或将其加入你自己的PATH。
+本机CLI本次安装在`~/.local/share/mingce-tools/gh_2.102.0_macOS_arm64/bin/gh`；若终端找不到gh，可使用这个绝对路径，或将其加入你自己的PATH。
