@@ -1,0 +1,51 @@
+[
+  {
+    "at": "2026-10-19T12:39:39.486Z",
+    "route": "https://mingce-stock-lab.justslug1.chatgpt.site/api/acceptance",
+    "http": 200,
+    "outcome": "ok",
+    "requestId": "7ed22715bda030011617dba46a179be3"
+  },
+  {
+    "at": "2026-10-19T12:39:39.486Z",
+    "route": "https://mingce-stock-lab.justslug1.chatgpt.site/api/acceptance",
+    "requestId": "7ed22715bda030011617dba46a179be3",
+    "verificationId": "31e05397-cd26-4821-a1cc-b65540d030a5",
+    "state": "partial",
+    "cases": [
+      {
+        "id": "balanced",
+        "engine": "model",
+        "model": "deepseek-flash",
+        "counts": {
+          "pass": 3,
+          "fail": 1,
+          "unknown": 0,
+          "total": 4
+        }
+      },
+      {
+        "id": "cash",
+        "engine": "model",
+        "model": "deepseek-flash",
+        "counts": {
+          "pass": 1,
+          "fail": 3,
+          "unknown": 0,
+          "total": 4
+        }
+      },
+      {
+        "id": "trend",
+        "engine": "model",
+        "model": "deepseek-flash",
+        "counts": {
+          "pass": 3,
+          "fail": 1,
+          "unknown": 0,
+          "total": 4
+        }
+      }
+    ]
+  }
+]

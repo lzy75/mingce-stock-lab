@@ -157,10 +157,6 @@ export default function Home() {
     ...new Set<Metric>([
       "price",
       "change",
-      "pe",
-      "revenueGrowth",
-      "profitGrowth",
-      "volatility",
       ...(run?.conditions.filter((c) => c.enabled).map((c) => c.metric) ?? []),
     ]),
   ];

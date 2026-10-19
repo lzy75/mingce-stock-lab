@@ -119,3 +119,5 @@ npm run security:check
 仓库 Actions → **Production acceptance** → Run workflow，在GitHub运行器直接访问公开域名，检查15项能力与三组真实案例。无需配置额外Key，调用产品本身的服务端接口。产物`production-acceptance.json`只含条件、状态和证据追踪元数据；存在数据缺口会保留partial，不伪称全部字段通过。入口403/非JSON使任务失败，不能用发布成功替代生产端到端通过。
 
 页面入口：**运行真实案例**，也可在**方法与口径**中运行。验收前可见固定研究池与条件；返回的验收标识可与服务端`mingce_acceptance`日志核对。
+
+已完成[独立生产验收](https://github.com/lzy75/mingce-stock-lab/actions/runs/39253736465)：公开域名真实AI/MCP/确定性筛选链路通过；[报告](docs/PRODUCTION_ACCEPTANCE.json)保留现金流场景的字段待核状态。旧403是此前环境失败记录，不代表本次独立运行器结果。
