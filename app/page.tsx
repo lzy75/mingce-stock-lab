@@ -46,6 +46,9 @@ import PreferenceBar from "@/components/preference-bar";
 import TransferPanel from "@/components/transfer-panel";
 import AppearanceMenu from "@/components/appearance-menu";
 import Count from "@/components/count";
+import LiveCases from "@/components/live-cases";
+import StartGuide from "@/components/start-guide";
+import { researchScenarios, METRIC_GROUPS } from "@/lib/scenarios";
 import ConnectionCheck from "@/components/connection-check";
 import ResearchSignals from "@/components/research-signals";
 import { evidenceGroups } from "@/lib/research-summary";
@@ -150,6 +153,17 @@ export default function Home() {
         s.name.includes(query) ||
         s.code.toLowerCase().includes(query.toLowerCase())),
   );
+  const tableMetrics = [
+    ...new Set<Metric>([
+      "price",
+      "change",
+      "pe",
+      "revenueGrowth",
+      "profitGrowth",
+      "volatility",
+      ...(run?.conditions.filter((c) => c.enabled).map((c) => c.metric) ?? []),
+    ]),
+  ];
   const chosen = all.find((s) => s.code === selected),
     delta = previous && run ? compareRuns(previous, run) : null;
   useEffect(() => {
@@ -238,7 +252,7 @@ export default function Home() {
     setTab("workspace");
     setNotice(`已载入“${e.label}”，请确认条件后执行。`);
   }
-  async function compile() {
+  async function compile(nextIntent = intent) {
     const v = ++version.current;
     setBusy("parse");
     setError("");
@@ -248,7 +262,7 @@ export default function Home() {
       const r = await fetch("/api/parse", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ intent }),
+        body: JSON.stringify({ intent: nextIntent }),
       });
       const b = (await r.json()) as ParsedIntent & { error?: string };
       if (v !== version.current) return;
@@ -457,7 +471,15 @@ export default function Home() {
             <button
               key={n.id}
               className={tab === n.id ? "active" : ""}
-              onClick={() => setTab(n.id)}
+              onClick={() => {
+                setTab(n.id);
+                if (n.id === "workspace")
+                  requestAnimationFrame(() =>
+                    document
+                      .getElementById("workbench")
+                      ?.scrollIntoView({ behavior: "smooth" }),
+                  );
+              }}
             >
               <n.icon size={15} />
               {n.label}
@@ -474,9 +496,30 @@ export default function Home() {
       <main id="main">
         {tab === "workspace" ? (
           <>
-            <section className="intro">
+            <StartGuide
+              intent={intent}
+              onIntent={(value) => {
+                version.current++;
+                setBusy("");
+                setIntent(value);
+                setConfirmed(false);
+                setDirty(true);
+              }}
+              busy={busy === "parse"}
+              onStart={() => {
+                void compile();
+                document
+                  .getElementById("workbench")
+                  ?.scrollIntoView({ behavior: "smooth" });
+              }}
+              onVerify={() => {
+                setTab("methods");
+                window.scrollTo({ top: 0 });
+              }}
+            />
+            <section className="intro" id="workbench">
               <div>
-                <h1>选股，让条件说话</h1>
+                <h2>策略研究台</h2>
                 <p>从研究想法到候选名单，保留每一步依据。</p>
               </div>
               <div className="workflow-cue">
@@ -570,7 +613,7 @@ export default function Home() {
                   />
                   <div className="input-meta">
                     <span>{intent.length}/2000</span>
-                    <span>支持7项指标</span>
+                    <span>{Object.keys(METRICS).length}项可用指标</span>
                   </div>
                   <button
                     className="primary full"
@@ -585,6 +628,35 @@ export default function Home() {
                     拆解为筛选条件
                     <ArrowUpRight size={17} />
                   </button>
+                  <label className="scenario-select">
+                    换一个研究场景
+                    <select
+                      aria-label="研究场景模板"
+                      value=""
+                      onChange={(e) => {
+                        const scene = researchScenarios.find(
+                          (s) => s.id === e.target.value,
+                        );
+                        if (scene) {
+                          version.current++;
+                          setIntent(scene.question);
+                          setBusy("");
+                          setConfirmed(false);
+                          setDirty(true);
+                          void compile(scene.question);
+                        }
+                      }}
+                    >
+                      <option value="" disabled>
+                        选择场景，AI 拆解条件
+                      </option>
+                      {researchScenarios.map((scene) => (
+                        <option key={scene.id} value={scene.id}>
+                          {scene.title}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
                   <div className="quick">
                     <span>试一个想法</span>
                     {examples.slice(0, 3).map((e, i) => (
@@ -1047,21 +1119,12 @@ export default function Home() {
                               <span className="sr-only">比较</span>
                             </th>
                             <th>名称 / 代码</th>
-                            <th>最新价</th>
-                            <th>涨跌幅</th>
-                            <th>
-                              PE <small>TTM</small>
-                            </th>
-                            {run.conditions.some(
-                              (c) => c.enabled && c.metric === "pb",
-                            ) && (
-                              <th>
-                                PB <small>MRQ</small>
+                            {tableMetrics.map((m) => (
+                              <th key={m}>
+                                {METRICS[m].label}
+                                <small> {METRICS[m].unit}</small>
                               </th>
-                            )}
-                            <th>营收同比</th>
-                            <th>归母净利同比</th>
-                            <th>20日波动</th>
+                            ))}
                             <th>
                               <span className="sr-only">证据</span>
                             </th>
@@ -1100,21 +1163,7 @@ export default function Home() {
                                   <span>{s.code}</span>
                                 </button>
                               </td>
-                              {(
-                                [
-                                  "price",
-                                  "change",
-                                  "pe",
-                                  ...(run.conditions.some(
-                                    (c) => c.enabled && c.metric === "pb",
-                                  )
-                                    ? ["pb" as Metric]
-                                    : []),
-                                  "revenueGrowth",
-                                  "profitGrowth",
-                                  "volatility",
-                                ] as Metric[]
-                              ).map((m) => (
+                              {tableMetrics.map((m) => (
                                 <td
                                   key={m}
                                   className={
@@ -1127,12 +1176,7 @@ export default function Home() {
                                         : ""
                                   }
                                 >
-                                  {num(
-                                    s.metrics[m]?.value,
-                                    m === "pe" || m === "pb" || m === "price"
-                                      ? ""
-                                      : "%",
-                                  )}
+                                  {num(s.metrics[m]?.value, "")}
                                   {s.metrics[m]?.value != null &&
                                     s.metrics[m]?.quality !== "ok" && (
                                       <sup>!</sup>
@@ -1195,7 +1239,7 @@ export default function Home() {
                         }
                         onClick={() => setShowTransfer(true)}
                       >
-                        发送到同花顺
+                        导出到同花顺
                         <ArrowUpRight size={13} />
                       </button>
                     </div>
@@ -1305,7 +1349,27 @@ export default function Home() {
             <p className="description">
               先验证连接，再核对数据时点与计算口径。
             </p>
-            <ConnectionCheck />
+            <LiveCases
+              onUse={(id) => {
+                const scene = researchScenarios.find((s) => s.id === id);
+                if (!scene) return;
+                switchMode("live");
+                setIntent(scene.question);
+                setConfirmed(false);
+                setDirty(true);
+                setTab("workspace");
+                void compile(scene.question);
+                requestAnimationFrame(() =>
+                  document
+                    .getElementById("workbench")
+                    ?.scrollIntoView({ behavior: "smooth" }),
+                );
+              }}
+            />
+            <details className="individual-checks">
+              <summary>单独排查 AI / 金融数据连接</summary>
+              <ConnectionCheck />
+            </details>
             <div className="method-grid">
               {[
                 [
@@ -1338,16 +1402,53 @@ export default function Home() {
                 </article>
               ))}
             </div>
-            <section className="definitions">
-              <h2>指标字典</h2>
-              {Object.entries(METRICS).map(([k, m]) => (
-                <details key={k}>
-                  <summary>
-                    {m.label}
-                    <small>{m.unit}</small>
-                  </summary>
-                  <p>{m.definition}</p>
-                </details>
+            <section className="definitions metric-dictionary">
+              <h2>
+                指标工具箱 <small>{Object.keys(METRICS).length}项已接入</small>
+              </h2>
+              {METRIC_GROUPS.map((category) => (
+                <div className="dictionary-category" key={category.title}>
+                  <h3>{category.title}</h3>
+                  {category.metrics.map((k) => (
+                    <details key={k}>
+                      <summary>
+                        <span>{METRICS[k].label}</span>
+                        <small>{METRICS[k].unit}</small>
+                      </summary>
+                      <p>{METRICS[k].definition}</p>
+                      <button
+                        className="text-button"
+                        onClick={() => {
+                          setTab("workspace");
+                          setConditions((cs) => [
+                            ...cs,
+                            {
+                              id: "c" + Date.now(),
+                              metric: k,
+                              op: "<" as const,
+                              value:
+                                k === "turnover"
+                                  ? 5
+                                  : k === "volume"
+                                    ? 100
+                                    : 20,
+                              enabled: true,
+                            },
+                          ]);
+                          setConfirmed(false);
+                          setDirty(true);
+                          requestAnimationFrame(() =>
+                            document
+                              .getElementById("workbench")
+                              ?.scrollIntoView({ behavior: "smooth" }),
+                          );
+                        }}
+                      >
+                        加入我的条件 <Plus size={12} />
+                      </button>
+                    </details>
+                  ))}
+                </div>
               ))}
             </section>
             <div className="source-links">

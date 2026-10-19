@@ -5,7 +5,15 @@ export type Metric =
   | "profitGrowth"
   | "volatility"
   | "change"
-  | "price";
+  | "price"
+  | "ps"
+  | "pcf"
+  | "turnover"
+  | "volume"
+  | "amplitude"
+  | "return20"
+  | "drawdown20"
+  | "ma20Deviation";
 export type Operator = ">" | ">=" | "<" | "<=" | "=";
 export type Status = "pass" | "fail" | "unknown";
 export interface Condition {
@@ -77,6 +85,7 @@ export interface ParsedIntent {
   reason?: string;
   engine: "rules" | "model";
   model?: string;
+  modelRequestId?: string;
 }
 
 export const METRICS: Record<
@@ -117,6 +126,53 @@ export const METRICS: Record<
     label: "当日涨跌幅",
     unit: "%",
     definition: "相对于前收盘价的涨跌幅，百分数值。不是未来涨跌预测。",
+  },
+  ps: {
+    label: "市销率 TTM",
+    unit: "倍",
+    definition:
+      "上游ps_ttm，市值相对过去12个月营业收入的倍数；非正值不用于正估值筛选。",
+  },
+  pcf: {
+    label: "市现率 TTM",
+    unit: "倍",
+    definition:
+      "上游pcf_ttm，市值相对TTM现金流的估值倍数；非正值不能当作便宜的证据。现金流具体口径遵循上游契约。",
+  },
+  turnover: {
+    label: "当日成交额",
+    unit: "亿元",
+    definition:
+      "行情快照turnover原始元值÷100000000；当日累计成交额，非换手率。",
+  },
+  volume: {
+    label: "当日成交量",
+    unit: "万股",
+    definition: "行情快照volume原始股数÷10000；当日累计股数，非手数。",
+  },
+  amplitude: {
+    label: "当日振幅",
+    unit: "%",
+    definition:
+      "(high_price−low_price)/prev_price×100，使用同批次当日最高/最低和前收盘价；前收盘≤0、缺失或最高小于最低时无法判断。",
+  },
+  return20: {
+    label: "20日涨幅",
+    unit: "%",
+    definition:
+      "此前21个完整交易日前复权收盘价的末值/首值−1，乘100；排除当日，非收益预测。",
+  },
+  drawdown20: {
+    label: "20日最大回撤",
+    unit: "%",
+    definition:
+      "此前21个完整交易日前复权收盘价相对历史峰值的最大跌幅，以正百分数表示；只衡量收盘价回撤，非盘中最大跌幅。",
+  },
+  ma20Deviation: {
+    label: "20日均线偏离",
+    unit: "%",
+    definition:
+      "最后一个完整交易日前复权收盘价/此前20个完整交易日收盘均值−1，乘100；非盘中均线偏离。",
   },
   price: {
     label: "最新价格",
@@ -183,13 +239,27 @@ export function validateConditions(conditions: Condition[]): string[] {
   }
   return errors;
 }
+export const HISTORY_METRICS: Metric[] = [
+  "volatility",
+  "return20",
+  "drawdown20",
+  "ma20Deviation",
+];
 const aliases: Record<Metric, RegExp> = {
+  ps: /市销率|\bps(?:[ _-]?ttm)?\b/i,
+  pcf: /市现率|\bpcf(?:[ _-]?ttm)?\b/i,
+  turnover: /(?:当日|今日)?成交额/,
+  volume: /(?:当日|今日)?成交量/,
+  amplitude: /(?:当日|今日|日内)?振幅/,
+  return20: /20日涨幅/,
+  drawdown20: /(?:20日)?最大回撤|20日回撤/,
+  ma20Deviation: /(?:20日)?均线偏离(?:率)?/,
   pe: /市盈率|\bpe(?:[ _-]?ttm)?\b/i,
   pb: /市净率|\bpb\b/i,
   revenueGrowth: /营收(?:同比)?|营业收入(?:同比)?/,
   profitGrowth: /(?:归母)?净利润(?:同比)?|利润增长/,
   volatility: /(?:20日)?(?:年化)?波动率|走势(?:相对)?稳定|低波动|稳健/,
-  change: /(?:当日|今日)?涨跌幅/,
+  change: /(?<!20日)(?:当日|今日)?涨跌幅/,
   price: /最新价格|股价|价格/,
 };
 function opFromText(s: string): Operator {
@@ -221,7 +291,7 @@ export function guardIntent(input: unknown): string | null {
       input,
     )
   )
-    return "首版尚未支持这项范围、指标或预测要求，不能静默忽略。当前支持PE、PB、营收/归母净利润同比、20日波动率、当日涨跌幅和价格。";
+    return "首版尚未支持这项范围、指标或预测要求，不能静默忽略。可在指标工具箱查看15项支持指标及用法。";
   if (
     /(\d+)\s*(?:日|天).*波动/.test(input) &&
     Number(input.match(/(\d+)\s*(?:日|天).*波动/)?.[1]) !== 20
@@ -259,7 +329,7 @@ export function parseIntent(input: unknown): ParsedIntent {
   for (const clause of clauses) {
     let recognized = false;
     const boundPattern =
-      /(不低于|不少于|大于等于|>=|≥|不高于|不超过|不大于|小于等于|<=|≤|高于|大于|超过|>|低于|小于|少于|<|等于|=)\s*(-?\d+(?:\.\d+)?)\s*(%|％|倍|元)?/g;
+      /(不低于|不少于|大于等于|>=|≥|不高于|不超过|不大于|小于等于|<=|≤|高于|大于|超过|>|低于|小于|少于|<|等于|=)\s*(-?\d+(?:\.\d+)?)\s*(亿元|亿|万股|%|％|倍|元)?/g;
     let metric =
       (Object.entries(aliases).find(([, re]) => re.test(clause))?.[0] as
         Metric | undefined) ?? null;
@@ -272,7 +342,10 @@ export function parseIntent(input: unknown): ParsedIntent {
     if (
       metric &&
       bounds.some(
-        (b) => b[3] && b[3].replace("％", "%") !== METRICS[metric!].unit,
+        (b) =>
+          b[3] &&
+          b[3].replace("％", "%").replace(/^亿$/, "亿元") !==
+            METRICS[metric!].unit,
       )
     ) {
       result.blocked = true;
@@ -346,10 +419,25 @@ export function parseIntent(input: unknown): ParsedIntent {
         volatility: 30,
         change: 0,
         price: 50,
+        ps: 3,
+        pcf: 20,
+        turnover: 5,
+        volume: 100,
+        amplitude: 5,
+        return20: 0,
+        drawdown20: 10,
+        ma20Deviation: 8,
       };
       add(
         metric,
-        ["revenueGrowth", "profitGrowth", "change"].includes(metric)
+        [
+          "revenueGrowth",
+          "profitGrowth",
+          "change",
+          "return20",
+          "turnover",
+          "volume",
+        ].includes(metric)
           ? ">"
           : "<=",
         defaults[metric],
@@ -389,6 +477,26 @@ export function annualizedVolatility(prices: unknown[]): number | null {
     100
   );
 }
+export function technicalWindow(
+  prices: unknown[],
+): { return20: number; drawdown20: number; ma20Deviation: number } | null {
+  if (prices.length < 21) return null;
+  const values = prices.slice(-21).map(metricValue);
+  if (values.some((v) => v === null || v <= 0)) return null;
+  const p = values as number[];
+  let peak = p[0],
+    drawdown = 0;
+  for (const value of p) {
+    peak = Math.max(peak, value);
+    drawdown = Math.max(drawdown, ((peak - value) / peak) * 100);
+  }
+  const mean = p.slice(-20).reduce((a, b) => a + b, 0) / 20;
+  return {
+    return20: (p[20] / p[0] - 1) * 100,
+    drawdown20: drawdown,
+    ma20Deviation: (p[20] / mean - 1) * 100,
+  };
+}
 export function evaluateStock(
   stock: Stock,
   conditions: Condition[],
@@ -411,7 +519,10 @@ export function evaluateStock(
                 ? "数据时点过期，无法验证"
                 : "数据口径冲突，无法验证"),
         };
-      if (["pe", "pb", "price"].includes(condition.metric) && value <= 0)
+      if (
+        ["pe", "pb", "ps", "pcf", "price"].includes(condition.metric) &&
+        value <= 0
+      )
         return {
           condition,
           evidence,

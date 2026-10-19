@@ -1,0 +1,22 @@
+name: Production acceptance
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-public-site:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Verify actual public origin and real cases
+        run: node scripts/verify-production.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: production-acceptance
+          path: artifacts/production-acceptance.json
+          retention-days: 30

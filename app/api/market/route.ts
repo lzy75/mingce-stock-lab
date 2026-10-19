@@ -12,7 +12,7 @@ export async function POST(request: Request) {
     if (
       !Array.isArray(metrics) ||
       !metrics.length ||
-      metrics.length > 7 ||
+      metrics.length > Object.keys(METRICS).length ||
       metrics.some((m) => typeof m !== "string" || !Object.hasOwn(METRICS, m))
     )
       return json({ error: "存在未知指标" }, 400);

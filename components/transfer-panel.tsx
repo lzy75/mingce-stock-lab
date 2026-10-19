@@ -45,12 +45,13 @@ export default function TransferPanel({
   }, [conditions]);
   const canExport =
     !!run && run.mode === "live" && run.pass.length > 0 && current;
-  let script = "";
+  let script = "",
+    scriptError = "";
   if (canExport) {
     try {
       script = supermindScript(conditions, run!, sector);
     } catch (e) {
-      script = e instanceof Error ? e.message : "无法生成";
+      scriptError = e instanceof Error ? e.message : "无法生成";
     }
   }
   async function copy(text: string) {
@@ -91,11 +92,9 @@ export default function TransferPanel({
         >
           <X size={19} />
         </button>
-        <div className="eyebrow">MINGCE → 同花顺</div>
-        <h2 id="transfer-title">让研究，在熟悉的平台继续。</h2>
-        <p>
-          保留可编辑条件与快照标识。金融数据MCP已接入；账户写入仍需目标平台授权，当前不会显示虚假的同步成功。
-        </p>
+
+        <h2 id="transfer-title">导出到同花顺</h2>
+        <p>复制策略到 i问财，或生成 SuperMind 自选板块脚本。</p>
         <div className="transfer-tabs">
           <button
             className={section === "strategy" ? "active" : ""}
@@ -119,12 +118,9 @@ export default function TransferPanel({
         {section === "strategy" ? (
           <>
             <div className="transfer-step">
-              <span>01</span>
               <div>
                 <h3>复制本次结构化条件</h3>
-                <p>
-                  这是研究草稿。同花顺的财报周期、复权及波动率算法需要逐条核对，不承诺跨平台结果一致。
-                </p>
+                <p>粘贴到 i问财后核对周期、复权与算法口径。</p>
               </div>
             </div>
             <textarea aria-label="同花顺策略表达" readOnly value={sentence} />
@@ -144,15 +140,12 @@ export default function TransferPanel({
             </div>
             <div className="transfer-boundary">
               <ShieldCheck size={15} />
-              <p>
-                复制或导出只生成研究草稿；在问财创建或保存策略，需要到目标页面确认。
-              </p>
+              <p>账户自动同步未开放：当前 MCP 只有数据读取权限。</p>
             </div>
           </>
         ) : (
           <>
             <div className="transfer-step">
-              <span>01</span>
               <div>
                 <h3>生成官方自选板块接续脚本</h3>
                 <p>
@@ -185,22 +178,35 @@ export default function TransferPanel({
                     </span>
                   ))}
                 </div>
-                <pre className="transfer-script">{script}</pre>
+                {scriptError ? (
+                  <p role="alert" className="negative">
+                    {scriptError}
+                  </p>
+                ) : (
+                  <pre className="transfer-script">{script}</pre>
+                )}
                 <div className="transfer-actions">
                   <button
                     className="primary"
+                    disabled={!!scriptError || !script}
                     onClick={() => file("mingce_supermind.py", script)}
                   >
                     <Download size={15} />
                     生成SuperMind脚本
                   </button>
-                  <button className="outline" onClick={() => void copy(script)}>
+                  <button
+                    className="outline"
+                    disabled={!!scriptError || !script}
+                    onClick={() => void copy(script)}
+                  >
                     <Copy size={14} />
                     复制脚本
                   </button>
                 </div>
                 <p className="transfer-small">
-                  在已登录且具有权限的SuperMind研究环境检查后运行。这里仅生成文件，未执行账户写入；也未验证与手机/PC端自选的账户同步关系。
+                  在已登录的 SuperMind
+                  中检查后运行，再回读板块名称与代码核验。手机/PC
+                  自选互通尚未验证。
                 </p>
               </>
             )}

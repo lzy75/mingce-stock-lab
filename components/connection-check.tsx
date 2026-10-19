@@ -57,7 +57,10 @@ export default function ConnectionCheck() {
         if (!Array.isArray(data.stocks) || data.stocks.length !== 2)
           throw Error("快照结构或研究池数量无效");
         const evidence = data.stocks.flatMap(
-          (s: { metrics: Record<string, unknown> }) => Object.values(s.metrics),
+          (s: { metrics: Record<string, unknown> }) =>
+            ["pe", "revenueGrowth", "profitGrowth", "volatility"].map(
+              (m) => s.metrics[m] ?? { quality: "missing" },
+            ),
         ) as {
           transport?: string;
           toolName?: string;

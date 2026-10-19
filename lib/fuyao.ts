@@ -1,5 +1,7 @@
 import {
   annualizedVolatility,
+  technicalWindow,
+  HISTORY_METRICS,
   metricValue,
   METRICS,
   type Evidence,
@@ -425,6 +427,8 @@ export async function loadMarket(
     for (const [m, field] of [
       ["pe", "pe_ttm"],
       ["pb", "pb_mrq"],
+      ["ps", "ps_ttm"],
+      ["pcf", "pcf_ttm"],
     ] as [Metric, string][]) {
       if (valuation)
         stock.metrics[m] = evidence(
@@ -459,11 +463,16 @@ export async function loadMarket(
     for (const [m, field] of [
       ["price", "last_price"],
       ["change", "price_change_ratio_pct"],
+      ["turnover", "turnover"],
+      ["volume", "volume"],
     ] as [Metric, string][]) {
       if (quote)
         stock.metrics[m] = evidence(
           m,
-          metricValue(q?.[field]),
+          metricValue(q?.[field]) === null
+            ? null
+            : metricValue(q?.[field])! /
+                (m === "turnover" ? 1e8 : m === "volume" ? 1e4 : 1),
           q?.[field] ?? null,
           quote,
           qPath,
@@ -481,6 +490,13 @@ export async function loadMarket(
                   note: "同股票同批次行情字段出现不一致值，未任选一条作为结论。",
                 }
               : {}),
+            ...(["turnover", "volume"].includes(m) &&
+            (metricValue(q?.[field]) ?? 0) < 0
+              ? {
+                  quality: "conflict" as const,
+                  note: "成交额或成交量不能为负值。",
+                }
+              : {}),
             ...(!q || metricValue(q[field]) === null
               ? {
                   quality: "missing" as const,
@@ -489,6 +505,56 @@ export async function loadMarket(
               : {}),
           },
         );
+    }
+    if (quote) {
+      const high = metricValue(q?.high_price),
+        low = metricValue(q?.low_price),
+        previous = metricValue(q?.prev_price);
+      const valid =
+        high !== null &&
+        low !== null &&
+        previous !== null &&
+        previous > 0 &&
+        high >= low &&
+        low > 0;
+      stock.metrics.amplitude = evidence(
+        "amplitude",
+        valid ? ((high! - low!) / previous!) * 100 : null,
+        {
+          high_price: q?.high_price ?? null,
+          low_price: q?.low_price ?? null,
+          prev_price: q?.prev_price ?? null,
+        },
+        quote,
+        qPath,
+        qAsOf,
+        {
+          field: "(high_price-low_price)/prev_price*100",
+          ...qQuality,
+          ...(["high_price", "low_price", "prev_price"].some(
+            (field) =>
+              new Set(
+                qItems
+                  .filter((row) => row.thscode === code)
+                  .map((row) => metricValue(row[field])),
+              ).size > 1,
+          )
+            ? {
+                quality: "conflict" as const,
+                note: "同批次振幅原始行情冲突，未任选一条。",
+              }
+            : {}),
+          ...(!valid
+            ? {
+                quality:
+                  high !== null && low !== null && high < low
+                    ? ("conflict" as const)
+                    : ("missing" as const),
+                note: "振幅原始价格缺失、非正或高低价冲突。",
+              }
+            : {}),
+        },
+      );
     }
     if (metrics.some((x) => x === "revenueGrowth" || x === "profitGrowth")) {
       const path = `/api/a-share/financials/income-statements?thscode=${code}&period=quarterly&limit=8`;
@@ -510,7 +576,7 @@ export async function loadMarket(
         );
       }
     }
-    if (metrics.includes("volatility")) {
+    if (metrics.some((m) => HISTORY_METRICS.includes(m))) {
       const historyEnd = Date.parse(dateShanghai(now) + "T00:00:00+08:00");
       const path = `/api/a-share/prices/historical?thscode=${code}&interval=1d&start=${historyEnd - 100 * 86400000}&end=${historyEnd}&adjust=forward`;
       try {
@@ -554,6 +620,32 @@ export async function loadMarket(
               : "交易日历/历史样本不完整，或有缺失交易日，不能计算20日波动率。",
           },
         );
+        const technical = complete
+          ? technicalWindow(selected.map((b) => b.close_price))
+          : null;
+        for (const m of ["return20", "drawdown20", "ma20Deviation"] as const)
+          stock.metrics[m] = evidence(
+            m,
+            technical?.[m] ?? null,
+            selected.map((b) => ({
+              date_ms: b.date_ms,
+              close_price: b.close_price,
+            })),
+            h,
+            path,
+            iso(selected.at(-1)?.date_ms),
+            {
+              field:
+                m === "return20"
+                  ? "(close[-1]/close[-21]-1)*100"
+                  : m === "drawdown20"
+                    ? "max((runningPeak-close)/runningPeak)*100"
+                    : "(close[-1]/mean(close[-20:])-1)*100",
+              note: complete
+                ? "同一组21个完整交易日前复权收盘；不含当日。"
+                : "交易日历或21日价格不完整，无法计算趋势指标。",
+            },
+          );
       } catch (err) {
         issues.push(
           `${code} 历史：${err instanceof Error ? err.message : "调用失败"}`,

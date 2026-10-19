@@ -75,6 +75,31 @@ export const demoSnapshot: Snapshot = {
         reportPeriod: key.includes("Growth") ? "构造2026中报" : undefined,
       } as Evidence;
     });
+    const extended: Partial<Record<Metric, number | null>> = {
+      ps: [2.8, 1.2, 3.1, 5.2, 2.1, 6.4, 1.8, 0.9, null, 2.6, 3.8, 2.4][i],
+      pcf: [15.2, 8.1, 18.4, 26.5, 13.3, 30.1, 11.2, 7.6, 16.2, -4, 20.1, 12.6][
+        i
+      ],
+      turnover: [8.2, 3.1, 6.5, 12.4, 2.7, 5.4, 4.2, 1.2, 7.6, 3.4, 6.2, 5.1][
+        i
+      ],
+      volume: 100 + i * 18,
+      amplitude: 2 + i * 0.4,
+      return20: [8, 3, 12, -4, 6, -7, 15, 2, 10, -12, 7, 4][i],
+      drawdown20: [5, 3, 8, 18, 7, 21, 12, 4, 9, 24, 6, 8][i],
+      ma20Deviation: [3, 1, 5, -2, 2, -5, 7, 1, 4, -8, 3, 2][i],
+    };
+    for (const [metric, value] of Object.entries(extended))
+      metrics[metric as Metric] = {
+        value,
+        raw: value,
+        field: "fixture." + metric,
+        source: "构造测试数据 / fixtures.ts",
+        asOf: "2026-10-16T07:00:00.000Z",
+        unit: METRICS[metric as Metric].unit,
+        definition: METRICS[metric as Metric].definition,
+        quality: value === null ? "missing" : "ok",
+      };
     return {
       code: `DEMO-${String(i + 1).padStart(2, "0")}`,
       name: `样本·${names[i]}`,
