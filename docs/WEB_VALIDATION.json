@@ -1,19 +1,19 @@
 {
-  "at": "2026-10-19T11:11:41.946Z",
+  "at": "2026-10-19T11:59:38.785Z",
   "base": "http://127.0.0.1:5173",
   "status": {
     "dataConfigured": true,
-    "aiConfigured": false
+    "aiConfigured": true
   },
   "parse": {
     "http": 200,
-    "engine": "rules",
+    "engine": "model",
     "conditions": 2
   },
   "market": {
     "http": 200,
     "count": 2,
-    "asOf": "2026-10-19T11:11:38.000Z",
+    "asOf": "2026-10-19T11:58:40.000Z",
     "transport": [
       "MCP"
     ],
@@ -24,12 +24,12 @@
       "get_a_share_prices_historical"
     ],
     "requestIds": [
-      "e77b2da5e15a4b9f9ac3c1204da9b269",
-      "fe675e55542a43549a8eade2bf4fa7e8",
-      "23cbfa3456c24ffb8f63c29d60a45f02",
-      "4c9dc94b46994e6292b8f7e046e51735",
-      "27ddcf9ded5f4002ba9b578f66b69d05",
-      "d7f4bb5419704f298dc86f491186d0a4"
+      "4c8e2ce0fd01422881bdf13248676397",
+      "ccee33314b4e470f8ac8ed758c899122",
+      "6b4c16f19e514e409792c942a39374c4",
+      "9ed2ac97e0d64a218cbe76853c97c8b1",
+      "63a6d6c7bda84cabb175462f53439fc9",
+      "73f4dd2cc23c43f0b2ce1c0fb4659a22"
     ],
     "qualities": [
       "ok"

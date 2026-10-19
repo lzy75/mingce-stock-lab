@@ -16,7 +16,8 @@ export interface Condition {
   enabled: boolean;
 }
 export interface Evidence {
-  transport?:'MCP'|'REST';toolName?:string;
+  transport?: "MCP" | "REST";
+  toolName?: string;
   value: number | null;
   raw: unknown;
   field: string;
@@ -91,7 +92,8 @@ export const METRICS: Record<
   pb: {
     label: "市净率 MRQ",
     unit: "倍",
-    definition: "股价相对于最近报告期每股净资产的倍数。",
+    definition:
+      "股价相对于最近报告期每股净资产的倍数。非正PB不能作为低估值证据。",
   },
   revenueGrowth: {
     label: "营收同比",
@@ -257,7 +259,7 @@ export function parseIntent(input: unknown): ParsedIntent {
   for (const clause of clauses) {
     let recognized = false;
     const boundPattern =
-      /(不低于|不少于|大于等于|>=|≥|不高于|不超过|不大于|小于等于|<=|≤|高于|大于|超过|>|低于|小于|少于|<|等于|=)\s*(-?\d+(?:\.\d+)?)\s*(?:%|％|倍|元)?/g;
+      /(不低于|不少于|大于等于|>=|≥|不高于|不超过|不大于|小于等于|<=|≤|高于|大于|超过|>|低于|小于|少于|<|等于|=)\s*(-?\d+(?:\.\d+)?)\s*(%|％|倍|元)?/g;
     let metric =
       (Object.entries(aliases).find(([, re]) => re.test(clause))?.[0] as
         Metric | undefined) ?? null;
@@ -267,6 +269,34 @@ export function parseIntent(input: unknown): ParsedIntent {
     const namedMetrics = Object.values(aliases).filter((re) =>
       re.test(clause),
     ).length;
+    if (
+      metric &&
+      bounds.some(
+        (b) => b[3] && b[3].replace("％", "%") !== METRICS[metric!].unit,
+      )
+    ) {
+      result.blocked = true;
+      result.reason = `${METRICS[metric].label}的单位应为${METRICS[metric].unit}，请核对后重写。`;
+      continue;
+    }
+    let uncovered = clause;
+    for (const re of Object.values(aliases))
+      uncovered = uncovered.replace(
+        new RegExp(re.source, re.flags.replace("g", "") + "g"),
+        "",
+      );
+    uncovered = uncovered
+      .replace(boundPattern, "")
+      .replace(/经营改善|基本面改善|业绩改善|估值合理|低估值|便宜/g, "")
+      .replace(
+        /帮我找|帮我|符合条件的|满足条件|筛选股票|筛选|选出|寻找|我想要|同时|股票|公司|A股|a股|请|找|一些|研究|看看|一下|的|中|在|满足|选|只|\s/g,
+        "",
+      );
+    if (uncovered) {
+      result.blocked = true;
+      result.reason = `尚不能可靠解释“${uncovered.slice(0, 40)}”，请拆分或补充明确条件；没有忽略这部分要求。`;
+      continue;
+    }
     if (namedMetrics > 1) {
       result.blocked = true;
       result.reason =
@@ -341,7 +371,7 @@ export function parseIntent(input: unknown): ParsedIntent {
   }
   if (!result.conditions.length) {
     result.blocked = true;
-    result.reason =
+    result.reason ??=
       "没有识别到可执行条件。可试试“市盈率低于25倍，营收同比大于0%”。";
   }
   result.warnings.push(...validateConditions(result.conditions));
@@ -381,12 +411,12 @@ export function evaluateStock(
                 ? "数据时点过期，无法验证"
                 : "数据口径冲突，无法验证"),
         };
-      if (condition.metric === "pe" && value <= 0)
+      if (["pe", "pb", "price"].includes(condition.metric) && value <= 0)
         return {
           condition,
           evidence,
           status: "unknown",
-          reason: "PE非正，不能用于正PE估值筛选",
+          reason: `${METRICS[condition.metric].label}非正，不能作为有效的正值筛选依据`,
         };
       const pass =
         condition.op === ">"

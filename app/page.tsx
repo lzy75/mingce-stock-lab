@@ -46,6 +46,9 @@ import PreferenceBar from "@/components/preference-bar";
 import TransferPanel from "@/components/transfer-panel";
 import AppearanceMenu from "@/components/appearance-menu";
 import Count from "@/components/count";
+import ConnectionCheck from "@/components/connection-check";
+import ResearchSignals from "@/components/research-signals";
+import { evidenceGroups } from "@/lib/research-summary";
 type Saved = {
   id: string;
   intent: string;
@@ -63,8 +66,15 @@ function time(s: string | null | undefined) {
     ? s
     : d.toLocaleString("zh-CN", { timeZone: "Asia/Shanghai", hour12: false });
 }
-function num(n: number | null | undefined, u = "") {
-  return typeof n === "number" && Number.isFinite(n) ? n.toFixed(2) + u : "—";
+function num(n: number | null | undefined, u = "", signed = false) {
+  return typeof n === "number" && Number.isFinite(n)
+    ? (signed && n > 0 ? "+" : "") +
+        n.toLocaleString("zh-CN", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }) +
+        u
+    : "—";
 }
 function download(name: string, value: unknown) {
   const u = URL.createObjectURL(
@@ -120,6 +130,7 @@ export default function Home() {
     [query, setQuery] = useState(""),
     [auto, setAuto] = useState(false);
   const [showTransfer, setShowTransfer] = useState(false);
+  const [focusedRule, setFocusedRule] = useState<string | null>(null);
   const version = useRef(0),
     scopeRef = useRef<HTMLTextAreaElement>(null),
     dialogRef = useRef<HTMLDivElement>(null);
@@ -131,6 +142,10 @@ export default function Home() {
   const rows = all.filter(
     (s) =>
       s.status === group &&
+      (!focusedRule ||
+        s.checks.some(
+          (c) => c.condition.id === focusedRule && c.status === "fail",
+        )) &&
       (!query ||
         s.name.includes(query) ||
         s.code.toLowerCase().includes(query.toLowerCase())),
@@ -301,6 +316,7 @@ export default function Home() {
       if (v !== version.current || !next) return;
       const result = screen(next, conditions);
       setPrevious(run);
+      setFocusedRule(null);
       setSnapshot(next);
       setRun(result);
       setDirty(false);
@@ -460,21 +476,19 @@ export default function Home() {
           <>
             <section className="intro">
               <div>
-                <h1>自然语言选股研究台</h1>
-                <p>
-                  先检查条件，再看候选名单。每个入选、排除和不确定性，都有证据。
-                </p>
+                <h1>选股，让条件说话</h1>
+                <p>从研究想法到候选名单，保留每一步依据。</p>
               </div>
-              <div className="research-loop">
-                <small>你的判断过程，可检查、可回溯</small>
-                <div>
-                  意图
-                  <ArrowRight size={22} />
-                  条件
-                  <ArrowRight size={22} />
-                  证据
-                </div>
-                <p>AI 提出解释，数据验证条件，你保留决定权。</p>
+              <div className="workflow-cue">
+                <span
+                  className={intent.trim() !== parsed.intent ? "active" : ""}
+                >
+                  01 描述
+                </span>
+                <i />
+                <span className={dirty ? "active" : ""}>02 核对</span>
+                <i />
+                <span className={!dirty && run ? "active" : ""}>03 验证</span>
               </div>
             </section>
             <section className={`data-strip ${mode}`} aria-label="数据模式">
@@ -538,9 +552,7 @@ export default function Home() {
             <div className="workspace">
               <aside className="strategy">
                 <section className="panel intent">
-                  <div className="section-title">
-                    <span>意图</span>描述你的研究想法
-                  </div>
+                  <div className="section-title">研究想法</div>
                   <label className="sr-only" htmlFor="intent">
                     自然语言选股需求
                   </label>
@@ -558,7 +570,7 @@ export default function Home() {
                   />
                   <div className="input-meta">
                     <span>{intent.length}/2000</span>
-                    <span>支持中文自然语言</span>
+                    <span>支持7项指标</span>
                   </div>
                   <button
                     className="primary full"
@@ -570,7 +582,7 @@ export default function Home() {
                     ) : (
                       <Sparkles size={16} className="spark" />
                     )}
-                    生成可检查的条件
+                    拆解为筛选条件
                     <ArrowUpRight size={17} />
                   </button>
                   <div className="quick">
@@ -585,7 +597,7 @@ export default function Home() {
                 </section>
                 <section className="panel conditions">
                   <div className="section-title">
-                    <span>条件</span>检查与修改条件
+                    核对筛选条件
                     <small>{conditions.length} RULES</small>
                   </div>
                   <div className="engine">
@@ -609,7 +621,7 @@ export default function Home() {
                         <details className="clarify">
                           <summary>
                             <CircleHelp size={14} />
-                            这些词，需要你的确认
+                            代理定义与阈值
                             <ChevronDown size={12} />
                           </summary>
                           {parsed.clarifications.map((c, i) => (
@@ -764,7 +776,7 @@ export default function Home() {
                     </>
                   )}
                   <p className="fineprint">
-                    模糊词阈值是可修改的建议。请检查后执行，支持能力与限制见“方法与口径”。
+                    代理阈值可修改；数据口径见右侧证据。
                   </p>
                 </section>
                 <div className="sidebar-foot">
@@ -772,19 +784,17 @@ export default function Home() {
                   <p>
                     只研究条件与证据
                     <br />
-                    不提供直接买卖建议或收益承诺
+                    研究工具 · 非买卖建议
                   </p>
                 </div>
               </aside>
               <section className="results">
                 <div className="result-heading">
                   <div>
-                    <div className="eyebrow tiny">03 / SCREENING RESULTS</div>
+                    <div className="eyebrow tiny">候选与排除</div>
                     <h2>
-                      策略观察名单
-                      <span>
-                        {run ? String(run.pass.length).padStart(2, "0") : "—"}
-                      </span>
+                      筛选结果
+                      <span>{run ? String(run.pass.length) : "—"}</span>
                     </h2>
                   </div>
                   <div className="actions">
@@ -810,6 +820,10 @@ export default function Home() {
                           conditions,
                           snapshot,
                           run,
+                          executionState: dirty
+                            ? "当前草稿未执行，run为上次结果"
+                            : "当前条件已执行",
+                          executedConditions: run?.conditions ?? null,
                           boundary: "研究用途，非投资建议",
                         })
                       }
@@ -851,7 +865,7 @@ export default function Home() {
                       disabled={!confirmed || dirty || !snapshot}
                       onChange={(e) => setAuto(e.target.checked)}
                     />
-                    每60秒尝试更新 · 页面可见时运行 · 以上游实际时点为准
+                    每60秒刷新 · 以上游时点为准
                   </label>
                 )}
                 {dirty && run && (
@@ -897,6 +911,7 @@ export default function Home() {
                           onClick={() => {
                             setGroup(s);
                             setQuery("");
+                            setFocusedRule(null);
                           }}
                         >
                           <span>
@@ -920,11 +935,37 @@ export default function Home() {
                             <ArrowUpRight size={17} />
                           </strong>
                           <small>
-                            {["可逐项核查", "展示排除依据", "保留不确定性"][i]}
+                            {`${Math.round((run[s].length / Math.max(1, all.length)) * 100)}% · 共${all.length}只`}
                           </small>
                         </button>
                       ))}
                     </div>
+                    <ResearchSignals
+                      run={run}
+                      focused={focusedRule}
+                      onFocus={(id) => {
+                        setFocusedRule(id);
+                        setGroup("fail");
+                        setQuery("");
+                        const first = run.fail.find(
+                          (s) =>
+                            !id ||
+                            s.checks.some(
+                              (c) =>
+                                c.condition.id === id && c.status === "fail",
+                            ),
+                        );
+                        if (first) setSelected(first.code);
+                      }}
+                    />
+                    {focusedRule && (
+                      <div className="focused-filter">
+                        只看不满足所选条件的股票
+                        <button onClick={() => setFocusedRule(null)}>
+                          显示全部 <X size={12} />
+                        </button>
+                      </div>
+                    )}
                     {delta && (
                       <div className="delta">
                         <GitBranch size={14} />
@@ -980,6 +1021,7 @@ export default function Home() {
                             onClick={() => {
                               setGroup(s);
                               setQuery("");
+                              setFocusedRule(null);
                             }}
                           >
                             {labels[s]}
@@ -1010,6 +1052,13 @@ export default function Home() {
                             <th>
                               PE <small>TTM</small>
                             </th>
+                            {run.conditions.some(
+                              (c) => c.enabled && c.metric === "pb",
+                            ) && (
+                              <th>
+                                PB <small>MRQ</small>
+                              </th>
+                            )}
                             <th>营收同比</th>
                             <th>归母净利同比</th>
                             <th>20日波动</th>
@@ -1056,6 +1105,11 @@ export default function Home() {
                                   "price",
                                   "change",
                                   "pe",
+                                  ...(run.conditions.some(
+                                    (c) => c.enabled && c.metric === "pb",
+                                  )
+                                    ? ["pb" as Metric]
+                                    : []),
                                   "revenueGrowth",
                                   "profitGrowth",
                                   "volatility",
@@ -1075,7 +1129,9 @@ export default function Home() {
                                 >
                                   {num(
                                     s.metrics[m]?.value,
-                                    m === "pe" || m === "price" ? "" : "%",
+                                    m === "pe" || m === "pb" || m === "price"
+                                      ? ""
+                                      : "%",
                                   )}
                                   {s.metrics[m]?.value != null &&
                                     s.metrics[m]?.quality !== "ok" && (
@@ -1145,8 +1201,8 @@ export default function Home() {
                     </div>
                     <section className="funnel">
                       <div className="section-title">
-                        <span>↳</span>每一步，留下了什么
-                        <small>FILTER TRACE</small>
+                        <span>↳</span>按执行顺序逐步缩小范围
+                        <small>筛选漏斗</small>
                       </div>
                       <div className="funnel-row">
                         <span>研究池</span>
@@ -1245,12 +1301,11 @@ export default function Home() {
           />
         ) : tab === "methods" ? (
           <section className="content-page">
-            <h1>
-              把口径说明白，<em>把边界留在场。</em>
-            </h1>
+            <h1>方法与接入</h1>
             <p className="description">
-              数字可回查，计算可复核，无法验证的部分明确呈现。
+              先验证连接，再核对数据时点与计算口径。
             </p>
+            <ConnectionCheck />
             <div className="method-grid">
               {[
                 [
@@ -1271,25 +1326,28 @@ export default function Home() {
                 [
                   "04",
                   "保存、比较与使用边界",
-                  "比较最多4只股票，统一指标并保留各自时点，不提供推荐排名。策略只保存在当前浏览器，不跨设备。真实数据导出应在授权允许范围内使用。密钥仅在服务端，不采集持仓或画像，不提供直接买卖建议或收益承诺。",
+                  "比较最多4只股票，统一指标并保留各自时点，不提供推荐排名。策略只保存在当前浏览器，不跨设备。真实数据导出应在授权允许范围内使用。密钥仅在服务端，不采集持仓或画像，研究工具 · 非买卖建议。",
                 ],
               ].map(([no, title, body]) => (
                 <article className="method-card" key={no}>
                   <h2>{title}</h2>
-                  <p>{body}</p>
+                  <details>
+                    <summary>查看职责与限制</summary>
+                    <p>{body}</p>
+                  </details>
                 </article>
               ))}
             </div>
             <section className="definitions">
               <h2>指标字典</h2>
               {Object.entries(METRICS).map(([k, m]) => (
-                <div key={k}>
-                  <b>
+                <details key={k}>
+                  <summary>
                     {m.label}
                     <small>{m.unit}</small>
-                  </b>
+                  </summary>
                   <p>{m.definition}</p>
-                </div>
+                </details>
               ))}
             </section>
             <div className="source-links">
@@ -1584,93 +1642,116 @@ function EvidencePanel({
         </div>
         <div>
           <span>当日涨跌幅</span>
-          <b>{num(stock.metrics.change?.value, "%")}</b>
+          <b>{num(stock.metrics.change?.value, "%", true)}</b>
         </div>
       </div>
       <div className="evidence-checks">
-        {stock.checks.map((c, i) => (
-          <article
-            className={`evidence-check ${c.status}`}
-            key={c.condition.id}
-          >
-            <div className="check-title">
-              <span>
-                {c.status === "pass" ? (
-                  <Check size={12} />
-                ) : c.status === "fail" ? (
-                  <X size={12} />
-                ) : (
-                  <CircleHelp size={12} />
-                )}
-              </span>
-              <b>{METRICS[c.condition.metric].label}</b>
-              <small>{String(i + 1).padStart(2, "0")}</small>
-            </div>
-            <div className="evidence-number">
-              {num(c.evidence?.value)}
-              <small>{METRICS[c.condition.metric].unit}</small>
-              <span>
-                条件 {c.condition.op} {c.condition.value}
-              </span>
-            </div>
-            <p>{c.reason}</p>
-            <details>
-              <summary>
-                查看字段与原始证据
-                <ChevronDown size={12} />
-              </summary>
-              <div className="raw">
-                <p>
-                  <b>口径</b>
-                  {METRICS[c.condition.metric].definition}
-                </p>
-                <p>
-                  <b>字段</b>
-                  <code>{c.evidence?.field ?? "未取得"}</code>
-                </p>
-                <p>
-                  <b>来源</b>
-                  {c.evidence?.source ?? "未取得"}
-                </p>
-                <p>
-                  <b>时点</b>
-                  {time(c.evidence?.asOf)}
-                </p>
-                {c.evidence?.reportPeriod && (
-                  <p>
-                    <b>报告期</b>
-                    {c.evidence.reportPeriod}
-                  </p>
-                )}
-                {c.evidence?.note && (
-                  <p>
-                    <b>备注</b>
-                    {c.evidence.note}
-                  </p>
-                )}
-                {c.evidence?.toolName && (
-                  <p>
-                    <b>MCP工具</b>
-                    <code>{c.evidence.toolName}</code>
-                  </p>
-                )}
-                {c.evidence?.requestId && (
-                  <p>
-                    <b>请求ID</b>
-                    <code>{c.evidence.requestId}</code>
-                  </p>
-                )}
-                {c.evidence?.endpoint && (
-                  <p>
-                    <b>接口</b>
-                    <code>{c.evidence.endpoint}</code>
-                  </p>
-                )}
-                <pre>{JSON.stringify(c.evidence?.raw ?? null, null, 2)}</pre>
+        {evidenceGroups(stock.checks).map((g, i) => {
+          const c = g.checks[0];
+          return (
+            <article className={`evidence-check ${g.status}`} key={g.metric}>
+              <div className="check-title">
+                <span>
+                  {g.status === "pass" ? (
+                    <Check size={12} />
+                  ) : g.status === "fail" ? (
+                    <X size={12} />
+                  ) : (
+                    <CircleHelp size={12} />
+                  )}
+                </span>
+                <b>{METRICS[c.condition.metric].label}</b>
+                <small>{String(i + 1).padStart(2, "0")}</small>
               </div>
-            </details>
-          </article>
-        ))}
+              <div className="evidence-number">
+                {num(c.evidence?.value)}
+                <small>{METRICS[c.condition.metric].unit}</small>
+              </div>
+              <div className="criterion-verdicts">
+                {g.checks.map((check) => (
+                  <div key={check.condition.id} className={check.status}>
+                    <span>
+                      {check.status === "pass"
+                        ? "满足"
+                        : check.status === "fail"
+                          ? "不满足"
+                          : "待核"}
+                    </span>
+                    <b>
+                      {check.condition.op} {check.condition.value}
+                      {METRICS[g.metric].unit}
+                    </b>
+                  </div>
+                ))}
+              </div>
+              {g.checks.some((check) => check.status === "unknown") && (
+                <p className="quality-reason">
+                  {g.checks.find((check) => check.status === "unknown")?.reason}
+                </p>
+              )}
+              <div className="evidence-period">
+                {g.evidence?.reportPeriod
+                  ? `报告期 ${g.evidence.reportPeriod}`
+                  : time(g.evidence?.asOf)}
+              </div>
+              <details>
+                <summary>
+                  字段与原始证据
+                  <ChevronDown size={12} />
+                </summary>
+                <div className="raw">
+                  <p>
+                    <b>口径</b>
+                    {METRICS[c.condition.metric].definition}
+                  </p>
+                  <p>
+                    <b>字段</b>
+                    <code>{c.evidence?.field ?? "未取得"}</code>
+                  </p>
+                  <p>
+                    <b>来源</b>
+                    {c.evidence?.source ?? "未取得"}
+                  </p>
+                  <p>
+                    <b>时点</b>
+                    {time(c.evidence?.asOf)}
+                  </p>
+                  {c.evidence?.reportPeriod && (
+                    <p>
+                      <b>报告期</b>
+                      {c.evidence.reportPeriod}
+                    </p>
+                  )}
+                  {c.evidence?.note && (
+                    <p>
+                      <b>备注</b>
+                      {c.evidence.note}
+                    </p>
+                  )}
+                  {c.evidence?.toolName && (
+                    <p>
+                      <b>MCP工具</b>
+                      <code>{c.evidence.toolName}</code>
+                    </p>
+                  )}
+                  {c.evidence?.requestId && (
+                    <p>
+                      <b>请求ID</b>
+                      <code>{c.evidence.requestId}</code>
+                    </p>
+                  )}
+                  {c.evidence?.endpoint && (
+                    <p>
+                      <b>接口</b>
+                      <code>{c.evidence.endpoint}</code>
+                    </p>
+                  )}
+                  <pre>{JSON.stringify(c.evidence?.raw ?? null, null, 2)}</pre>
+                </div>
+              </details>
+            </article>
+          );
+        })}
       </div>
       <div className="snapshot-meta">
         <small>

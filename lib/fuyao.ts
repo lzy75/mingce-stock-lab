@@ -7,7 +7,7 @@ import {
   type Snapshot,
   type Stock,
 } from "./domain.ts";
-import {FuyaoMcp,mcpArguments} from './mcp-client.ts';
+import { FuyaoMcp, mcpArguments } from "./mcp-client.ts";
 export const FUYAO_ORIGIN = "https://fuyao.aicubes.cn";
 export const DEFAULT_CODES = [
   "600519.SH",
@@ -35,8 +35,8 @@ export class DataError extends Error {
 }
 type Raw = Record<string, unknown>;
 export interface Envelope {
-  transport?:'MCP'|'REST';
-  toolName?:string;
+  transport?: "MCP" | "REST";
+  toolName?: string;
   code: number;
   message?: string;
   request_id?: string;
@@ -134,6 +134,14 @@ export function quoteQuality(
       quality: "missing",
       note: "上游未提供有效快照时间，无法验证时点。",
     };
+  const timestamp = Date.parse(asOf);
+  if (!Number.isFinite(timestamp))
+    return { quality: "missing", note: "快照时间格式无效，无法验证时点。" };
+  if (timestamp > now + 60000)
+    return {
+      quality: "conflict",
+      note: "快照时间超前当前时间超过1分钟，无法验证。",
+    };
   if (!tradingDates.length)
     return { quality: "missing", note: "交易日历不可用，无法验证行情新鲜度。" };
   const local = new Date(now + 8 * 3600000);
@@ -184,14 +192,21 @@ function evidence(
     value,
     raw,
     field: metric,
-    source: envelope.transport==='MCP'?'扶摇 MCP / 同花顺金融数据 API':'扶摇 REST / 同花顺金融数据 API',
-    transport:envelope.transport??'REST',toolName:envelope.toolName,
+    source:
+      envelope.transport === "MCP"
+        ? "扶摇 MCP / 同花顺金融数据 API"
+        : "扶摇 REST / 同花顺金融数据 API",
+    transport: envelope.transport ?? "REST",
+    toolName: envelope.toolName,
     asOf,
     unit: METRICS[metric].unit,
     definition: METRICS[metric].definition,
     quality: value === null ? "missing" : "ok",
     requestId: envelope.request_id,
-    endpoint: envelope.transport==='MCP'?FUYAO_ORIGIN+'/mcp/a-share':FUYAO_ORIGIN + path,
+    endpoint:
+      envelope.transport === "MCP"
+        ? FUYAO_ORIGIN + "/mcp/a-share"
+        : FUYAO_ORIGIN + path,
     fetchedAt: new Date().toISOString(),
     ...extra,
   };
@@ -213,10 +228,18 @@ export function financialGrowth(
       const end = metricValue(r.period_end_ms);
       const published = metricValue(r.report_date_ms);
       return (
-        end !== null && end <= now && published !== null && published <= now
+        end !== null &&
+        end <= now &&
+        published !== null &&
+        published <= now &&
+        published >= end
       );
     })
-    .sort((a, b) => Number(b.period_end_ms) - Number(a.period_end_ms));
+    .sort(
+      (a, b) =>
+        Number(b.period_end_ms) - Number(a.period_end_ms) ||
+        Number(b.report_date_ms) - Number(a.report_date_ms),
+    );
   const latest = sorted[0];
   if (!latest)
     return {
@@ -231,9 +254,38 @@ export function financialGrowth(
     const p = new Date(Number(r.period_end_ms) + 8 * 3600000);
     return (
       p.getUTCFullYear() === d.getUTCFullYear() - 1 &&
-      p.getUTCMonth() === d.getUTCMonth()
+      p.getUTCMonth() === d.getUTCMonth() &&
+      p.getUTCDate() === d.getUTCDate()
     );
   });
+  const ambiguous = [latest, previous].some(
+    (record) =>
+      record &&
+      new Set(
+        sorted
+          .filter(
+            (r) =>
+              r.period_end_ms === record.period_end_ms &&
+              r.report_date_ms === record.report_date_ms,
+          )
+          .map((r) => JSON.stringify(r[field] ?? null)),
+      ).size > 1,
+  );
+  if (ambiguous)
+    return {
+      value: null,
+      raw: {
+        records: sorted.filter(
+          (r) =>
+            r.period_end_ms === latest.period_end_ms ||
+            r.period_end_ms === previous?.period_end_ms,
+        ),
+      },
+      asOf: iso(latest.report_date_ms),
+      reportPeriod: dateShanghai(Number(latest.period_end_ms)),
+      quality: "conflict",
+      note: "同报告期和同披露日出现不一致原始字段，未任选一条计算。",
+    };
   const a = metricValue(latest[field]),
     b = metricValue(previous?.[field]);
   const asOf = iso(latest.report_date_ms);
@@ -293,19 +345,43 @@ export async function loadMarket(
   codes: string[],
   metrics: Metric[],
   fetcher: typeof fetch = fetch,
-  transport:'rest'|'mcp'='rest',
+  transport: "rest" | "mcp" = "rest",
 ): Promise<Snapshot> {
-  if(!key)throw new DataError('尚未配置扶摇数据授权，请设置服务端密钥。','NOT_CONFIGURED');
+  if (!key)
+    throw new DataError(
+      "尚未配置扶摇数据授权，请设置服务端密钥。",
+      "NOT_CONFIGURED",
+    );
   const now = Date.now();
   const issues: string[] = [];
-  const mcp=transport==='mcp'?new FuyaoMcp(key,fetcher):null;
+  const mcp = transport === "mcp" ? new FuyaoMcp(key, fetcher) : null;
   const get = async (path: string, ttl: number) => {
-    const cacheKey = transport + key + path + (path.includes('calendar/trading-days')?dateShanghai(now):'');
+    const cacheKey =
+      transport +
+      key +
+      path +
+      (path.includes("calendar/trading-days") ? dateShanghai(now) : "");
     const prior = cache.get(cacheKey);
     if (prior && now - prior.time < ttl) return prior.value;
-    let value:Envelope;
-    if(mcp){const {name,args}=mcpArguments(path);const result=await mcp.call(name,args);if(result.code!==0||!result.data||typeof result.data!=='object')throw new DataError(`MCP金融数据业务失败（${result.code??'响应结构无效'}）`,'MCP_BUSINESS',typeof result.request_id==='string'?result.request_id:undefined);value={...result,code:0,data:result.data as Record<string,unknown>,transport:'MCP',toolName:name} as Envelope;}
-    else value={...await fetchFuyao(path,key,fetcher),transport:'REST'};
+    let value: Envelope;
+    if (mcp) {
+      const { name, args } = mcpArguments(path);
+      const result = await mcp.call(name, args);
+      if (result.code !== 0 || !result.data || typeof result.data !== "object")
+        throw new DataError(
+          `MCP金融数据业务失败（${result.code ?? "响应结构无效"}）`,
+          "MCP_BUSINESS",
+          typeof result.request_id === "string" ? result.request_id : undefined,
+        );
+      value = {
+        ...result,
+        code: 0,
+        data: result.data as Record<string, unknown>,
+        transport: "MCP",
+        toolName: name,
+      } as Envelope;
+    } else
+      value = { ...(await fetchFuyao(path, key, fetcher)), transport: "REST" };
     if (cache.size > 400) cache.clear();
     cache.set(cacheKey, { time: now, value });
     return value;
@@ -361,6 +437,16 @@ export async function loadMarket(
           {
             field,
             ...vQuality,
+            ...(new Set(
+              vItems
+                .filter((row) => row.thscode === code)
+                .map((row) => metricValue(row[field])),
+            ).size > 1
+              ? {
+                  quality: "conflict" as const,
+                  note: "同股票同批次估值字段出现不一致值，未任选一条作为结论。",
+                }
+              : {}),
             ...(!v || metricValue(v[field]) === null
               ? {
                   quality: "missing" as const,
@@ -385,6 +471,16 @@ export async function loadMarket(
           {
             field,
             ...qQuality,
+            ...(new Set(
+              qItems
+                .filter((row) => row.thscode === code)
+                .map((row) => metricValue(row[field])),
+            ).size > 1
+              ? {
+                  quality: "conflict" as const,
+                  note: "同股票同批次行情字段出现不一致值，未任选一条作为结论。",
+                }
+              : {}),
             ...(!q || metricValue(q[field]) === null
               ? {
                   quality: "missing" as const,
@@ -415,7 +511,7 @@ export async function loadMarket(
       }
     }
     if (metrics.includes("volatility")) {
-      const historyEnd=Date.parse(dateShanghai(now)+'T00:00:00+08:00');
+      const historyEnd = Date.parse(dateShanghai(now) + "T00:00:00+08:00");
       const path = `/api/a-share/prices/historical?thscode=${code}&interval=1d&start=${historyEnd - 100 * 86400000}&end=${historyEnd}&adjust=forward`;
       try {
         const h = await get(path, 3600000);

@@ -1,14 +1,14 @@
 import { spawnSync } from "node:child_process";
-import { writeFileSync } from "node:fs";
+import { writeFileSync, readdirSync } from "node:fs";
 const startedAt = new Date().toISOString();
 const r = spawnSync(
   process.execPath,
   [
     "--test",
     "--test-reporter=tap",
-    "tests/data.test.mjs",
-    "tests/domain.test.mjs",
-    "tests/features.test.mjs",
+    ...readdirSync("tests")
+      .filter((name) => name.endsWith(".test.mjs"))
+      .map((name) => "tests/" + name),
   ],
   { encoding: "utf8" },
 );

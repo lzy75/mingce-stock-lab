@@ -2,6 +2,7 @@ import {writeFile} from 'node:fs/promises';
 const base=process.env.MINGCE_TEST_URL||'http://127.0.0.1:5173';
 const status=await (await fetch(base+'/api/status')).json();
 const parseResponse=await fetch(base+'/api/parse',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({intent:'市盈率低于25倍，营收同比大于0%'})});const parsed=await parseResponse.json();
+if(!parseResponse.ok||!parsed.conditions?.length)throw Error(`Parse validation failed: HTTP ${parseResponse.status}`);
 const response=await fetch(base+'/api/market',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({codes:['600519.SH','000333.SZ'],metrics:['pe','revenueGrowth','profitGrowth','volatility']})});const market=await response.json();
 if(!response.ok)throw Error(JSON.stringify(market));
 const evidence=market.stocks.flatMap(s=>Object.values(s.metrics));

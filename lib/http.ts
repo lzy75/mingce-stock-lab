@@ -25,8 +25,25 @@ export function gate(request: Request, limit = 30): Response | null {
   if (requests.size > 1000) requests.clear();
   return null;
 }
-export async function readBody(request: Request) {
+export class RequestError extends Error {
+  status: number;
+  constructor(message: string, status = 400) {
+    super(message);
+    this.status = status;
+  }
+}
+export async function readBody(
+  request: Request,
+): Promise<Record<string, unknown>> {
   const text = await request.text();
-  if (text.length > 12000) throw new Error("请求内容过长");
-  return JSON.parse(text);
+  if (text.length > 12000) throw new RequestError("请求内容过长", 413);
+  let value: unknown;
+  try {
+    value = JSON.parse(text);
+  } catch {
+    throw new RequestError("请求必须是有效JSON对象");
+  }
+  if (!value || typeof value !== "object" || Array.isArray(value))
+    throw new RequestError("请求必须是JSON对象");
+  return value as Record<string, unknown>;
 }

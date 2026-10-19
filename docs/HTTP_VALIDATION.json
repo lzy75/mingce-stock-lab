@@ -1,0 +1,107 @@
+{
+  "at": "2026-10-19T11:59:36.061Z",
+  "base": "http://127.0.0.1:5173",
+  "passed": true,
+  "checks": [
+    {
+      "name": "服务端配置状态",
+      "at": "2026-10-19T11:59:33.456Z",
+      "http": 200,
+      "ms": 25,
+      "passed": true,
+      "dataConfigured": true,
+      "aiConfigured": true
+    },
+    {
+      "name": "语义主链路",
+      "at": "2026-10-19T11:59:33.482Z",
+      "http": 200,
+      "ms": 1585,
+      "passed": true,
+      "engine": "model",
+      "model": "deepseek-flash",
+      "conditions": 5
+    },
+    {
+      "name": "显式阈值模型不增减条件",
+      "at": "2026-10-19T11:59:35.067Z",
+      "http": 200,
+      "ms": 915,
+      "passed": true,
+      "engine": "model",
+      "conditions": 2
+    },
+    {
+      "name": "错单位拦截",
+      "at": "2026-10-19T11:59:35.982Z",
+      "http": 200,
+      "ms": 23,
+      "passed": true
+    },
+    {
+      "name": "未支持附加要求不丢弃",
+      "at": "2026-10-19T11:59:36.005Z",
+      "http": 200,
+      "ms": 12,
+      "passed": true
+    },
+    {
+      "name": "非法JSON",
+      "at": "2026-10-19T11:59:36.017Z",
+      "http": 400,
+      "ms": 11,
+      "passed": true
+    },
+    {
+      "name": "非法研究池",
+      "at": "2026-10-19T11:59:36.029Z",
+      "http": 400,
+      "ms": 10,
+      "passed": true
+    },
+    {
+      "name": "空指标请求",
+      "at": "2026-10-19T11:59:36.039Z",
+      "http": 400,
+      "ms": 11,
+      "passed": true
+    },
+    {
+      "name": "跨站请求",
+      "at": "2026-10-19T11:59:36.050Z",
+      "ms": 2,
+      "http": 403,
+      "passed": true,
+      "layer": "request-gate",
+      "reason": "响应不是JSON；未将入口失败算作应用通过"
+    },
+    {
+      "name": "真实MCP研究池",
+      "at": "2026-10-19T11:59:36.052Z",
+      "http": 200,
+      "ms": 9,
+      "passed": true,
+      "stocks": 2,
+      "transport": [
+        "MCP"
+      ],
+      "tools": [
+        "get_a_share_valuations_snapshot",
+        "get_a_share_prices_snapshot",
+        "get_a_share_financials_income_statements",
+        "get_a_share_prices_historical"
+      ],
+      "requestIds": [
+        "4c8e2ce0fd01422881bdf13248676397",
+        "ccee33314b4e470f8ac8ed758c899122",
+        "6b4c16f19e514e409792c942a39374c4",
+        "9ed2ac97e0d64a218cbe76853c97c8b1",
+        "63a6d6c7bda84cabb175462f53439fc9",
+        "73f4dd2cc23c43f0b2ce1c0fb4659a22"
+      ],
+      "qualities": [
+        "ok"
+      ]
+    }
+  ]
+}

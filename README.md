@@ -37,7 +37,7 @@ npm run dev
 | `AI_BASE_URL` | 可选，OpenAI兼容接口根地址，默认 `https://api.openai.com/v1` |
 | `AI_MODEL` | 配置模型时必填，不在源码中假定某个可用模型 |
 
-本地变量放入被Git忽略的`.dev.vars`。生产变量必须配置在服务端，不能使用`NEXT_PUBLIC_`或`VITE_`前缀，不写入GitHub、前端或托管清单。默认没有模型授权时，页面真实呈现“本地语义规则”；连接模型后，编译请求才会调用该服务。模型失败会显示错误，不静默生成正常结论。
+本地变量放入被Git忽略的`.dev.vars`。生产变量必须配置在服务端，不能使用`NEXT_PUBLIC_`或`VITE_`前缀，不写入GitHub、前端或托管清单。当前部署已配置DeepSeek官方接口（deepseek-flash），完成本地真实模型调用验证。没有模型授权时，页面真实呈现“本地语义规则”；连接模型后，编译请求才会调用该服务。模型失败会显示错误，不静默生成正常结论。
 
 ## 核心架构与AI边界
 | 模块 | 职责 |
@@ -53,7 +53,7 @@ npm run dev
 | `lib/transfer.ts` | 同花顺条件表达、SuperMind脚本与可追溯导出 |
 | `lib/diagnostics.ts` | 注入异常响应与构造样本的内置验证 |
 
-AI只提出条件及澄清；用户检查确认后，确定性引擎执行。没有任意SQL或代码执行功能。所有条件AND；冲突、未知字段、无穷值或空条件阻止筛选。明确失败优先于缺失，但全部逐条件证据仍保留。
+规则先进行能力、单位与约束预检；AI核对条件并提供代理解释。模型输出不能遗漏、禁用、修改或新增预检条件；用户检查确认后，确定性引擎执行。没有任意SQL或代码执行功能。所有条件AND；冲突、未知字段、无穷值或空条件阻止筛选。明确失败优先于缺失，但全部逐条件证据仍保留。
 
 ## 真实数据来源和统计口径
 优先使用题目推荐的 [扶摇 / 同花顺金融数据API](https://fuyao.aicubes.cn/docs/)。默认通过官方 `https://fuyao.aicubes.cn/mcp/a-share` 初始化、发现工具并只读调用；显式配置REST时才使用下列REST路径。已实测发现21项工具，当前没有账户自选写入工具。iFinD未接入，未用未经验证的其他行情源替换。
@@ -85,10 +85,13 @@ npm run security:check
 
 安全检查需Git仓库已初始化，检查跟踪文件与前端产物是否包含本地已配置的密钥。真实联调需授权及网络，可执行`node scripts/probe-data.mjs`；仅在被忽略的本地报告中保存元数据/少量验证值，不上传受限原始数据。
 
+- [题目逐项核对与未完成边界](docs/REQUIREMENTS_AUDIT.md)
+- [GitHub授权与接口测试指南](docs/CONNECTION_GUIDE.md)
+- [完整HTTP验收元数据](docs/HTTP_VALIDATION.json)
 - [构建前验收基线](docs/ACCEPTANCE.md)
 - [AI使用与验证记录](docs/AI_USAGE.md)
 - [测试说明与边界](docs/TESTING.md)
-- [实际自动测试输出](docs/test-results.tap)（62项）
+- [实际自动测试输出](docs/test-results.tap)（75项）
 - [官方MCP实际联调元数据](docs/MCP_VALIDATION.json)
 - [网页服务端到端联调元数据](docs/WEB_VALIDATION.json)
 - [设计方向与复核](docs/DESIGN_REVIEW.md)

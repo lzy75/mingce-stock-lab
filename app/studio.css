@@ -1751,3 +1751,737 @@ html[data-theme="dark"] .actions .icon {
 .table-wrap {
   position: relative;
 }
+
+/* 研究信息优先：中文阅读字体、轻字重、紧凑的证据与因果反馈。 */
+:root {
+  --sans:
+    "PingFang SC", -apple-system, BlinkMacSystemFont, "Microsoft YaHei UI",
+    "Segoe UI", sans-serif;
+  --figure: "Avenir Next", "Segoe UI", sans-serif;
+  --muted: #65748a;
+  --paper: #f6f8fc;
+}
+body {
+  font-size: 14px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+button,
+input,
+textarea,
+select {
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.topbar {
+  height: 64px;
+}
+.brand > b {
+  font-weight: 500;
+}
+.brand-en {
+  font-family: var(--figure);
+  letter-spacing: 1.6px;
+}
+.topbar nav button {
+  font-weight: 450;
+}
+.intro {
+  padding: 22px 0 17px;
+}
+.intro h1 {
+  font: 500 26px/1.4 var(--sans);
+  letter-spacing: 0;
+}
+.intro p {
+  font-size: 13px;
+  margin-top: 5px;
+  color: #64758d;
+}
+.workflow-cue {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font: 12px var(--sans);
+  color: #8090a7;
+}
+.workflow-cue i {
+  width: 28px;
+  height: 1px;
+  background: #d9e2ef;
+}
+.workflow-cue .active {
+  color: #185bd3;
+}
+.section-title {
+  font-weight: 500;
+  font-size: 14px;
+}
+.section-title small {
+  margin-left: auto;
+}
+.intent textarea {
+  font-size: 14px;
+  line-height: 1.9;
+  min-height: 94px;
+}
+.input-meta {
+  font-size: 11px;
+}
+.primary {
+  font-size: 13px;
+  font-weight: 450;
+}
+.engine {
+  font-size: 11px;
+}
+.engine > span {
+  font-size: 11px;
+}
+.condition-top select {
+  font-size: 12px;
+}
+.condition-value input {
+  font: 13px var(--figure);
+}
+.condition {
+  padding: 10px 0;
+}
+.clarify {
+  padding: 8px 10px;
+}
+.clarify summary {
+  font-size: 12px;
+}
+.confirm {
+  font-size: 12px;
+}
+.fineprint {
+  font-size: 11px;
+}
+.sidebar-foot {
+  margin-top: 9px;
+}
+.sidebar-foot p:first-child {
+  display: none;
+}
+.result-heading h2 {
+  font-size: 22px;
+  font-weight: 500;
+}
+.result-heading h2 > span {
+  display: none;
+}
+.result-heading .eyebrow {
+  display: none;
+}
+.result-context {
+  font-size: 12px;
+  margin-top: 8px;
+  padding-bottom: 8px;
+}
+.summary-cards {
+  margin: 10px 0 12px;
+}
+.summary-card {
+  padding: 10px 14px;
+}
+.summary-card strong {
+  font: 500 29px/1.25 var(--figure);
+}
+.summary-card > span {
+  font-size: 12px;
+}
+.summary-card small {
+  font-size: 11px;
+}
+.summary-card strong > svg {
+  display: none;
+}
+.stock-table td {
+  font-size: 13px;
+  font-family: var(--figure);
+  padding: 13px 6px;
+}
+.stock-name b {
+  font: 450 14px var(--sans);
+}
+.stock-name span {
+  font: 11px var(--figure);
+}
+.stock-table th {
+  font: 12px var(--sans);
+}
+.stock-table td.positive {
+  color: #ab5929;
+}
+.stock-table td.negative {
+  color: #466ea9;
+}
+.evidence-stock h2 {
+  font-size: 24px;
+  font-weight: 500;
+  margin-top: 5px;
+}
+.evidence-stock > p {
+  font-size: 12px;
+  margin-top: 8px;
+}
+.evidence-title {
+  font-size: 12px;
+}
+.evidence-number {
+  font: 500 26px var(--figure);
+  margin: 6px 0;
+}
+.evidence-check {
+  padding: 13px 0;
+}
+.check-title b {
+  font-size: 13px;
+  font-weight: 450;
+}
+.check-title small {
+  display: none;
+}
+.criterion-verdicts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  margin: 9px 0 7px;
+}
+.criterion-verdicts > div {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  font-size: 12px;
+}
+.criterion-verdicts span {
+  font-size: 11px;
+  color: #2d65b6;
+}
+.criterion-verdicts .fail span {
+  color: #ab5929;
+}
+.criterion-verdicts .unknown span {
+  color: #8a6337;
+}
+.criterion-verdicts b {
+  font: 500 12px var(--figure);
+  color: var(--ink);
+}
+.evidence-period {
+  font-size: 11px;
+  color: #657b9d;
+  margin: 7px 0;
+}
+.quality-reason {
+  font-size: 12px !important;
+  color: #976b39 !important;
+}
+.evidence-check summary {
+  font-size: 11px;
+}
+.evidence-facts {
+  margin-top: 12px;
+  padding: 10px 0;
+}
+.evidence-facts b {
+  font-family: var(--figure);
+  font-size: 16px;
+}
+.evidence-stock .status-tag {
+  font-weight: 400;
+}
+.evidence-bottom {
+  padding: 9px;
+  margin-top: 13px;
+}
+.evidence-bottom p {
+  font-size: 11px;
+}
+.snapshot-meta > small {
+  display: none;
+}
+.raw pre {
+  font-size: 11px;
+}
+.content-page h1 {
+  font-weight: 500;
+  letter-spacing: 0;
+}
+.scenario-canvas h2,
+.counter-heading h2,
+.method-card h2,
+.saved-card h3 {
+  font-weight: 500;
+}
+.funnel {
+  padding: 13px 15px;
+}
+.funnel .section-title {
+  font-size: 12px;
+}
+.funnel .section-title > span,
+.funnel .section-title > small {
+  display: none;
+}
+.funnel > p {
+  font-size: 11px;
+}
+.platform-action {
+  margin-top: 14px;
+}
+.platform-action small {
+  display: none;
+}
+.platform-action b {
+  font-weight: 450;
+}
+.platform-icon {
+  font-weight: 500;
+}
+.research-signals {
+  background: #fff;
+  border: 1px solid #dee6f2;
+  border-radius: 6px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+}
+.research-signals header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 9px;
+}
+.research-signals h3 {
+  font-size: 13px;
+  font-weight: 500;
+  color: #314c74;
+  margin: 0;
+}
+.research-signals header > span {
+  font-size: 11px;
+  color: #6d82a2;
+}
+.impact-rows {
+  display: grid;
+  gap: 4px;
+}
+.impact-rows > button {
+  display: grid;
+  grid-template-columns: minmax(138px, 1.4fr) minmax(30px, 1fr) 48px 62px;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+  padding: 6px 0;
+  min-width: 0;
+  color: #566f93;
+}
+.impact-rows > button:hover:not(:disabled),
+.impact-rows > button.active {
+  color: #205dcb;
+}
+.impact-rows > button:disabled {
+  opacity: 1;
+  cursor: default;
+}
+.impact-label {
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.impact-track {
+  height: 4px;
+  background: #edf1f8;
+  border-radius: 2px;
+  overflow: hidden;
+}
+.impact-track i {
+  height: 100%;
+  display: block;
+  background: #c17b4e;
+  border-radius: 2px;
+  transition: width 0.2s;
+}
+.impact-rows b {
+  font: 500 13px var(--figure);
+  text-align: right;
+}
+.impact-rows b small {
+  font: 11px var(--sans);
+  margin-left: 5px;
+  color: #7789a4;
+}
+.impact-rows em {
+  font-style: normal;
+  font-size: 11px;
+  text-align: right;
+  color: #8492a6;
+}
+.research-signals details {
+  margin-top: 7px;
+  font-size: 11px;
+  color: #7688a3;
+}
+.research-signals details p {
+  font-size: 11px;
+  line-height: 1.8;
+  margin-top: 6px;
+}
+.research-signals summary {
+  cursor: pointer;
+  display: inline;
+}
+.focused-filter {
+  font-size: 12px;
+  color: #8e602e;
+  background: #fff5e9;
+  padding: 8px 10px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+}
+.focused-filter button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #3969ad;
+  font-size: 11px;
+}
+.evidence-title > span {
+  font-weight: 450;
+}
+.footer {
+  font-size: 11px;
+}
+.footer > span:nth-child(3) {
+  display: none;
+}
+html[data-theme="dark"] .research-signals {
+  background: #14171e;
+  border-color: #293244;
+}
+html[data-theme="dark"] .research-signals h3 {
+  color: #c1d4ef;
+}
+html[data-theme="dark"] .impact-track {
+  background: #27334b;
+}
+html[data-theme="dark"] .criterion-verdicts b {
+  color: #dbe6f8;
+}
+html[data-theme="dark"] .criterion-verdicts span {
+  color: #84adf0;
+}
+html[data-theme="dark"] .criterion-verdicts .fail span {
+  color: #dea875;
+}
+html[data-theme="dark"] .focused-filter {
+  background: #30261e;
+  color: #e0b286;
+}
+@media (max-width: 1050px) {
+  .workflow-cue {
+    display: none;
+  }
+  .research-signals header {
+    align-items: flex-start;
+  }
+  .research-signals header > span {
+    font-size: 10px;
+  }
+  .impact-rows > button {
+    grid-template-columns: minmax(120px, 1.4fr) 1fr 43px;
+    gap: 8px;
+  }
+  .impact-rows em {
+    display: none;
+  }
+  .evidence-checks {
+    display: block;
+  }
+}
+@media (max-width: 730px) {
+  .topbar {
+    height: auto;
+    min-height: 106px;
+  }
+  .intro h1 {
+    font-size: 25px;
+  }
+  .intro p {
+    font-size: 12px;
+  }
+  .section-title {
+    font-size: 14px;
+  }
+  .stock-table td {
+    font-size: 13px;
+  }
+  .condition-top select {
+    font-size: 13px;
+  }
+  .intent textarea {
+    font-size: 14px;
+  }
+  .research-signals header > span {
+    font-size: 10px;
+  }
+  .impact-rows > button {
+    grid-template-columns: minmax(135px, 1.5fr) 1fr 45px;
+    gap: 8px;
+  }
+  .impact-label {
+    font-size: 11px;
+  }
+  .research-signals {
+    padding: 12px;
+  }
+  .result-heading h2 {
+    font-size: 22px;
+  }
+  .summary-card > span {
+    font-size: 11px;
+  }
+  .summary-card strong {
+    font-size: 28px;
+  }
+  .summary-card small {
+    font-size: 10px;
+  }
+  .evidence-number {
+    font-size: 26px;
+  }
+  .criterion-verdicts b,
+  .criterion-verdicts > div {
+    font-size: 13px;
+  }
+  .evidence-period {
+    font-size: 12px;
+  }
+}
+@media (min-width: 731px) {
+  .intro {
+    padding: 12px 0;
+  }
+  .intro h1 {
+    font-size: 24px;
+    line-height: 1.35;
+  }
+  .intro p {
+    line-height: 1.5;
+    margin-top: 4px;
+  }
+  .data-strip,
+  .data-strip.live {
+    min-height: 42px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+  .preference-toggle {
+    min-height: 35px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+  .workspace {
+    margin-top: 14px;
+  }
+  .summary-card {
+    padding: 8px 13px;
+  }
+  .summary-card strong {
+    font-size: 27px;
+    line-height: 1.2;
+    margin-top: 2px;
+  }
+  .summary-card small {
+    margin-top: 1px;
+  }
+  .research-signals {
+    padding: 9px 13px;
+  }
+  .research-signals header {
+    margin-bottom: 5px;
+    line-height: 1.4;
+  }
+  .impact-rows {
+    gap: 0;
+  }
+  .impact-rows > button {
+    min-height: 0;
+    height: auto;
+    padding: 3px 0;
+    line-height: 1.35;
+  }
+  .impact-label {
+    font-size: 12px;
+  }
+  .research-signals details {
+    margin-top: 3px;
+    line-height: 1.4;
+  }
+  .research-signals header > span {
+    font-size: 11px;
+  }
+  .result-context {
+    padding-bottom: 3px;
+    margin-top: 4px;
+  }
+}
+.connection-check {
+  border: 1px solid #dce5f1;
+  background: var(--white);
+  border-radius: 7px;
+  padding: 18px 20px;
+  margin: 22px 0;
+}
+.connection-check > header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+}
+.connection-check h2 {
+  font-size: 18px;
+  font-weight: 500;
+  margin: 0;
+}
+.connection-check header p {
+  font-size: 12px;
+  color: #70819b;
+  margin: 5px 0 0;
+}
+.connection-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 16px 0;
+}
+.connection-actions > span {
+  font-size: 11px;
+  color: #7a8ca8;
+}
+.connection-idle {
+  font-size: 12px;
+  color: #7a8ba4;
+}
+.connection-results article {
+  border-top: 1px solid var(--line);
+  padding: 12px 0;
+}
+.connection-results article > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+.connection-results article b {
+  font-weight: 500;
+}
+.connection-results article > div > span {
+  color: #9c6534;
+}
+.connection-results article.passed > div > span {
+  color: #2866bc;
+}
+.connection-results article small {
+  margin-left: auto;
+  color: #788ba7;
+  font-size: 11px;
+  font-family: var(--figure);
+}
+.connection-results article p,
+.connection-results article details {
+  font-size: 12px;
+  color: #657b9b;
+  margin-top: 6px;
+  line-height: 1.8;
+}
+.connection-results dl {
+  font-size: 11px;
+  display: grid;
+  grid-template-columns: 60px 1fr;
+  gap: 6px;
+  margin-top: 9px;
+}
+.connection-results dd {
+  overflow-wrap: anywhere;
+  margin: 0;
+}
+.method-grid .method-card {
+  padding: 18px 20px;
+}
+.method-card h2 {
+  font-size: 16px;
+}
+.method-card details {
+  font-size: 12px;
+  color: #6a80a1;
+  margin-top: 12px;
+}
+.method-card summary {
+  cursor: pointer;
+}
+.definitions > details {
+  border-top: 1px solid var(--line);
+  padding: 13px 0;
+}
+.definitions > details > summary {
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 450;
+}
+.definitions summary small {
+  font-size: 12px;
+  color: #6c82a4;
+}
+.definitions details p {
+  font-size: 12px;
+  line-height: 1.9;
+  margin-top: 10px;
+}
+html[data-theme="dark"] .connection-check {
+  background: #14171e;
+  border-color: #293244;
+}
+html[data-theme="dark"] .connection-results article.passed > div > span {
+  color: #8ab2f2;
+}
+html[data-theme="dark"] .connection-results article p {
+  color: #a5b9d7;
+}
+@media (max-width: 730px) {
+  .connection-check {
+    padding: 15px;
+  }
+  .connection-check > header {
+    display: block;
+  }
+  .connection-check > header > .text-button {
+    margin-top: 10px;
+  }
+  .connection-results article > div {
+    flex-wrap: wrap;
+  }
+  .connection-results article small {
+    margin-left: 0;
+    display: block;
+    width: 100%;
+  }
+  .connection-actions .outline {
+    min-height: 42px;
+    font-size: 12px;
+  }
+  .connection-results article p {
+    font-size: 12px;
+  }
+}
