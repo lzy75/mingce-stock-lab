@@ -28,3 +28,9 @@
 - 实际机器报告：[PRODUCTION_ACCEPTANCE.json](PRODUCTION_ACCEPTANCE.json)。链路通过；现金流场景2项条件数据不适用，整体证据状态partial，未声称全字段通过。
 - 旧PRODUCTION_HTTP_VALIDATION.json的403保留为历史记录；本次独立运行器已验证生产可达，不能据此保证所有网络持续可达。当前浏览器自动检查生产页仍发生工具超时，本地同源码交互已实际验证。
 - 本次收尾将结果表收紧为价格/涨跌幅与已执行条件相关指标，避免显示未请求字段造成的空列；案例进入工作台时沿用4只固定研究池。
+
+### 最终公开双接口与边界验收
+线上第6版应用源码7629752acf688431dcb79a11e8e34659670f87da；后续提交仅更新GitHub验收工作流和记录，不改变线上应用。
+[最终生产验收通过](https://github.com/lzy75/mingce-stock-lab/actions/runs/39254655619)：三场景真实链路及10项公开HTTP验收全部通过，包括真实POST /api/parse、POST /api/market、错单位/未知条件、非法JSON、非法研究池、空指标及预期跨站403。
+最新三场景验收ID：cdaa4e8c-eade-4f58-b47b-16655cd75279。公开双接口报告：[PRODUCTION_HTTP_GITHUB.json](PRODUCTION_HTTP_GITHUB.json)；三场景报告：[PRODUCTION_FINAL_ACCEPTANCE.json](PRODUCTION_FINAL_ACCEPTANCE.json)。字段不适用继续标记partial。
+[最终验证工作流源码CI通过](https://github.com/lzy75/mingce-stock-lab/actions/runs/39254631661)。

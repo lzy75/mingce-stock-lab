@@ -121,3 +121,5 @@ npm run security:check
 页面入口：**运行真实案例**，也可在**方法与口径**中运行。验收前可见固定研究池与条件；返回的验收标识可与服务端`mingce_acceptance`日志核对。
 
 已完成[独立生产验收](https://github.com/lzy75/mingce-stock-lab/actions/runs/39253736465)：公开域名真实AI/MCP/确定性筛选链路通过；[报告](docs/PRODUCTION_ACCEPTANCE.json)保留现金流场景的字段待核状态。旧403是此前环境失败记录，不代表本次独立运行器结果。
+
+最终[生产双接口与10项HTTP验收通过](https://github.com/lzy75/mingce-stock-lab/actions/runs/39254655619)：包含网页实际使用的公开AI和金融路由。[公开接口报告](docs/PRODUCTION_HTTP_GITHUB.json) · [三场景报告](docs/PRODUCTION_FINAL_ACCEPTANCE.json)。

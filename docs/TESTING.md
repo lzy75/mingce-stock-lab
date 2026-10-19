@@ -73,3 +73,5 @@
 ## 独立生产验收结果
 GitHub Actions真实通过：https://github.com/lzy75/mingce-stock-lab/actions/runs/39253736465 。公开域名GET状态和POST三案例均HTTP200，模型调用ID和MCP数据追踪齐全；托管Worker日志中存在相同验收ID及三态计数。见PRODUCTION_ACCEPTANCE.json。现金流场景2项条件不适用正确保留partial，不能解读为所有字段都齐全。旧403报告是历史网络环境记录，未删改为成功。
 浏览器另已实测：从现金流案例进入4只真实研究池，确认执行后1入选/3排除/0未知，并保留2项PCF条件待核。生产浏览器自动检查仍遇工具超时，不宣称完成生产页面点击测试。
+
+最终生产公开接口10/10通过，见PRODUCTION_HTTP_GITHUB.json；最新三场景见PRODUCTION_FINAL_ACCEPTANCE.json，工作流39254655619。实测无效同花顺板块名称显示具体错误，禁止生成和复制脚本；未执行目标账户写入。
