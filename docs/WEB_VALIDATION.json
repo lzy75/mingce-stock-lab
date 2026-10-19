@@ -1,0 +1,40 @@
+{
+  "at": "2026-10-19T11:11:41.946Z",
+  "base": "http://127.0.0.1:5173",
+  "status": {
+    "dataConfigured": true,
+    "aiConfigured": false
+  },
+  "parse": {
+    "http": 200,
+    "engine": "rules",
+    "conditions": 2
+  },
+  "market": {
+    "http": 200,
+    "count": 2,
+    "asOf": "2026-10-19T11:11:38.000Z",
+    "transport": [
+      "MCP"
+    ],
+    "tools": [
+      "get_a_share_valuations_snapshot",
+      "get_a_share_prices_snapshot",
+      "get_a_share_financials_income_statements",
+      "get_a_share_prices_historical"
+    ],
+    "requestIds": [
+      "e77b2da5e15a4b9f9ac3c1204da9b269",
+      "fe675e55542a43549a8eade2bf4fa7e8",
+      "23cbfa3456c24ffb8f63c29d60a45f02",
+      "4c9dc94b46994e6292b8f7e046e51735",
+      "27ddcf9ded5f4002ba9b578f66b69d05",
+      "d7f4bb5419704f298dc86f491186d0a4"
+    ],
+    "qualities": [
+      "ok"
+    ],
+    "rawEvidenceAvailable": true
+  },
+  "noSecretsInResponse": true
+}

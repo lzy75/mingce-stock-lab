@@ -1,0 +1,10 @@
+import {writeFile} from 'node:fs/promises';
+const base=process.env.MINGCE_TEST_URL||'http://127.0.0.1:5173';
+const status=await (await fetch(base+'/api/status')).json();
+const parseResponse=await fetch(base+'/api/parse',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({intent:'市盈率低于25倍，营收同比大于0%'})});const parsed=await parseResponse.json();
+const response=await fetch(base+'/api/market',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({codes:['600519.SH','000333.SZ'],metrics:['pe','revenueGrowth','profitGrowth','volatility']})});const market=await response.json();
+if(!response.ok)throw Error(JSON.stringify(market));
+const evidence=market.stocks.flatMap(s=>Object.values(s.metrics));
+const report={at:new Date().toISOString(),base,status:{dataConfigured:status.dataConfigured,aiConfigured:status.aiConfigured},parse:{http:parseResponse.status,engine:parsed.engine,conditions:parsed.conditions?.length},market:{http:response.status,count:market.stocks.length,asOf:market.asOf,transport:[...new Set(evidence.map(x=>x.transport))],tools:[...new Set(evidence.map(x=>x.toolName))],requestIds:[...new Set(evidence.map(x=>x.requestId))],qualities:[...new Set(evidence.map(x=>x.quality))],rawEvidenceAvailable:evidence.every(x=>x.raw!==undefined)},noSecretsInResponse:!JSON.stringify(market).includes('sk-fuyao-')};
+if(report.market.transport.some(t=>t!=='MCP'))throw Error('Expected actual MCP transport');
+console.log(JSON.stringify(report,null,2));await writeFile('docs/WEB_VALIDATION.json',JSON.stringify(report,null,2));

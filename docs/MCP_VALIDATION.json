@@ -1,0 +1,47 @@
+{
+  "at": "2026-10-19T10:59:29.474Z",
+  "endpoint": "https://fuyao.aicubes.cn/mcp/a-share",
+  "protocol": "2025-03-26",
+  "handshake": true,
+  "toolCount": 21,
+  "requiredTools": [
+    {
+      "name": "get_a_share_prices_snapshot",
+      "available": true
+    },
+    {
+      "name": "get_a_share_valuations_snapshot",
+      "available": true
+    },
+    {
+      "name": "get_a_share_financials_income_statements",
+      "available": true
+    },
+    {
+      "name": "get_a_share_calendar_trading_days",
+      "available": true
+    },
+    {
+      "name": "get_a_share_prices_historical",
+      "available": true
+    }
+  ],
+  "sampleCall": {
+    "tool": "get_a_share_prices_snapshot",
+    "responseKeys": [
+      "code",
+      "message",
+      "data",
+      "request_id"
+    ],
+    "code": 0,
+    "requestId": "e14bbfd5d95a410d8131398eeec020a7",
+    "dataKeys": [
+      "timestamp",
+      "total",
+      "item"
+    ]
+  },
+  "writeTools": [],
+  "note": "仅记录协议与工具元数据，不保存授权或行情原始值。"
+}

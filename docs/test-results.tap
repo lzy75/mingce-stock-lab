@@ -1,0 +1,387 @@
+# Test run started: 2026-10-19T11:17:42.827Z
+# Command: node --test tests/*.test.mjs
+TAP version 13
+# Subtest: 未配置Key时不发起上游调用
+ok 1 - 未配置Key时不发起上游调用
+  ---
+  duration_ms: 1.447625
+  type: 'test'
+  ...
+# Subtest: HTTP200业务2003和2001都作为授权失败
+ok 2 - HTTP200业务2003和2001都作为授权失败
+  ---
+  duration_ms: 13.590167
+  type: 'test'
+  ...
+# Subtest: 429、网络、非法JSON、缺业务码都明确失败
+ok 3 - 429、网络、非法JSON、缺业务码都明确失败
+  ---
+  duration_ms: 1.125791
+  type: 'test'
+  ...
+# Subtest: 成功响应保留请求ID；item缺失不当作空结果
+ok 4 - 成功响应保留请求ID；item缺失不当作空结果
+  ---
+  duration_ms: 0.296834
+  type: 'test'
+  ...
+# Subtest: 代码限制防任意URL/超出配额，且去重
+ok 5 - 代码限制防任意URL/超出配额，且去重
+  ---
+  duration_ms: 0.541292
+  type: 'test'
+  ...
+# Subtest: 同比使用上年同报告期而非相邻季度
+ok 6 - 同比使用上年同报告期而非相邻季度
+  ---
+  duration_ms: 1.621667
+  type: 'test'
+  ...
+# Subtest: 未来披露财报不能进入当前筛选
+ok 7 - 未来披露财报不能进入当前筛选
+  ---
+  duration_ms: 0.265417
+  type: 'test'
+  ...
+# Subtest: 上年同期≤0或缺字段时同比无法判断
+ok 8 - 上年同期≤0或缺字段时同比无法判断
+  ---
+  duration_ms: 0.226417
+  type: 'test'
+  ...
+# Subtest: 没有披露日期不可将报告期末误称披露日
+ok 9 - 没有披露日期不可将报告期末误称披露日
+  ---
+  duration_ms: 0.199208
+  type: 'test'
+  ...
+# Subtest: 行情按交易日判断，不将周末正常收盘数据判过期
+ok 10 - 行情按交易日判断，不将周末正常收盘数据判过期
+  ---
+  duration_ms: 0.220417
+  type: 'test'
+  ...
+# Subtest: 当日已收盘但快照仍为昨日，判过期
+ok 11 - 当日已收盘但快照仍为昨日，判过期
+  ---
+  duration_ms: 0.059958
+  type: 'test'
+  ...
+# Subtest: 午休不把11:30时点因墙钟间隔判过期
+ok 12 - 午休不把11:30时点因墙钟间隔判过期
+  ---
+  duration_ms: 0.097166
+  type: 'test'
+  ...
+# Subtest: 收盘前快照明显滞后与缺交易日历都无法称最新
+ok 13 - 收盘前快照明显滞后与缺交易日历都无法称最新
+  ---
+  duration_ms: 0.066292
+  type: 'test'
+  ...
+# Subtest: 自然语言主链路提出可修改的经营/估值/稳定性代理条件
+ok 14 - 自然语言主链路提出可修改的经营/估值/稳定性代理条件
+  ---
+  duration_ms: 1.570583
+  type: 'test'
+  ...
+# Subtest: 明确阈值被保留，百分数不重复乘100
+ok 15 - 明确阈值被保留，百分数不重复乘100
+  ---
+  duration_ms: 0.499291
+  type: 'test'
+  ...
+# Subtest: 同一指标矛盾上下界阻止执行
+ok 16 - 同一指标矛盾上下界阻止执行
+  ---
+  duration_ms: 0.084084
+  type: 'test'
+  ...
+# Subtest: 开区间相等上下界无解
+ok 17 - 开区间相等上下界无解
+  ---
+  duration_ms: 0.047375
+  type: 'test'
+  ...
+# Subtest: 闭区间相等上下界允许
+ok 18 - 闭区间相等上下界允许
+  ---
+  duration_ms: 0.053125
+  type: 'test'
+  ...
+# Subtest: 未知指标、运算符、无穷与重复id均拒绝
+ok 19 - 未知指标、运算符、无穷与重复id均拒绝
+  ---
+  duration_ms: 0.067709
+  type: 'test'
+  ...
+# Subtest: 禁用条件不参与判断
+ok 20 - 禁用条件不参与判断
+  ---
+  duration_ms: 0.185208
+  type: 'test'
+  ...
+# Subtest: 缺失不补零，无法判断
+ok 21 - 缺失不补零，无法判断
+  ---
+  duration_ms: 0.047625
+  type: 'test'
+  ...
+# Subtest: 空字符串不转换成0
+ok 22 - 空字符串不转换成0
+  ---
+  duration_ms: 0.044
+  type: 'test'
+  ...
+# Subtest: 非数字字符串不解析为数字前缀
+ok 23 - 非数字字符串不解析为数字前缀
+  ---
+  duration_ms: 0.145292
+  type: 'test'
+  ...
+# Subtest: 百分数字符串只移除百分号
+ok 24 - 百分数字符串只移除百分号
+  ---
+  duration_ms: 0.094833
+  type: 'test'
+  ...
+# Subtest: 负PE不能因为小于阈值入选
+ok 25 - 负PE不能因为小于阈值入选
+  ---
+  duration_ms: 0.067584
+  type: 'test'
+  ...
+# Subtest: 0 PE不作为低估值入选
+ok 26 - 0 PE不作为低估值入选
+  ---
+  duration_ms: 0.054541
+  type: 'test'
+  ...
+# Subtest: 明确失败优先于其他字段缺失，保留全部原因
+ok 27 - 明确失败优先于其他字段缺失，保留全部原因
+  ---
+  duration_ms: 0.054333
+  type: 'test'
+  ...
+# Subtest: 过期和冲突证据无法作为满足条件的证据
+ok 28 - 过期和冲突证据无法作为满足条件的证据
+  ---
+  duration_ms: 0.045958
+  type: 'test'
+  ...
+# Subtest: 20日波动率必须有21个有效收盘价
+ok 29 - 20日波动率必须有21个有效收盘价
+  ---
+  duration_ms: 0.080459
+  type: 'test'
+  ...
+# Subtest: 缺失/非正价格不会被跳过后拼接收益率
+ok 30 - 缺失/非正价格不会被跳过后拼接收益率
+  ---
+  duration_ms: 0.03775
+  type: 'test'
+  ...
+# Subtest: 样本标准差、252日年化、百分数输出可手算复核
+ok 31 - 样本标准差、252日年化、百分数输出可手算复核
+  ---
+  duration_ms: 0.043792
+  type: 'test'
+  ...
+# Subtest: 同快照条件修改提供可追溯新增/移出
+ok 32 - 同快照条件修改提供可追溯新增/移出
+  ---
+  duration_ms: 6.130583
+  type: 'test'
+  ...
+# Subtest: 不同快照不能声称差异只来自条件修改
+ok 33 - 不同快照不能声称差异只来自条件修改
+  ---
+  duration_ms: 0.084791
+  type: 'test'
+  ...
+# Subtest: 所有股票恰好落入一个分组，计数守恒
+ok 34 - 所有股票恰好落入一个分组，计数守恒
+  ---
+  duration_ms: 0.244958
+  type: 'test'
+  ...
+# Subtest: 零结果真实返回且不自动放宽条件
+ok 35 - 零结果真实返回且不自动放宽条件
+  ---
+  duration_ms: 0.114625
+  type: 'test'
+  ...
+# Subtest: 未启用任何条件时不执行无界筛选
+ok 36 - 未启用任何条件时不执行无界筛选
+  ---
+  duration_ms: 0.102792
+  type: 'test'
+  ...
+# Subtest: 收益承诺与直接买卖请求被拦截
+ok 37 - 收益承诺与直接买卖请求被拦截
+  ---
+  duration_ms: 0.040709
+  type: 'test'
+  ...
+# Subtest: 不支持的新闻/资金/行业条件不能静默丢失
+ok 38 - 不支持的新闻/资金/行业条件不能静默丢失
+  ---
+  duration_ms: 0.02975
+  type: 'test'
+  ...
+# Subtest: 提示词注入不生成可执行代码
+ok 39 - 提示词注入不生成可执行代码
+  ---
+  duration_ms: 0.023417
+  type: 'test'
+  ...
+# Subtest: 非20日窗口不悄悄替换成20日
+ok 40 - 非20日窗口不悄悄替换成20日
+  ---
+  duration_ms: 0.036
+  type: 'test'
+  ...
+# Subtest: 空输入与过长输入明确拒绝
+ok 41 - 空输入与过长输入明确拒绝
+  ---
+  duration_ms: 0.033833
+  type: 'test'
+  ...
+# Subtest: 示例注册表同时包含主链路与corner case
+ok 42 - 示例注册表同时包含主链路与corner case
+  ---
+  duration_ms: 0.028208
+  type: 'test'
+  ...
+# Subtest: OR逻辑不能误编译为AND
+ok 43 - OR逻辑不能误编译为AND
+  ---
+  duration_ms: 0.027708
+  type: 'test'
+  ...
+# Subtest: 没有分隔的不同指标不会共用同一字段
+ok 44 - 没有分隔的不同指标不会共用同一字段
+  ---
+  duration_ms: 0.037459
+  type: 'test'
+  ...
+# Subtest: 未支持的区间表述不被替换为默认阈值
+ok 45 - 未支持的区间表述不被替换为默认阈值
+  ---
+  duration_ms: 0.039792
+  type: 'test'
+  ...
+# Subtest: MCP JSON与SSE响应均可解析
+ok 46 - MCP JSON与SSE响应均可解析
+  ---
+  duration_ms: 0.967458
+  type: 'test'
+  ...
+# Subtest: MCP路径映射白名单和数值参数转换
+ok 47 - MCP路径映射白名单和数值参数转换
+  ---
+  duration_ms: 0.1415
+  type: 'test'
+  ...
+# Subtest: MCP真实协议顺序、工具发现和结构化结果
+ok 48 - MCP真实协议顺序、工具发现和结构化结果
+  ---
+  duration_ms: 12.7965
+  type: 'test'
+  ...
+# Subtest: MCP未公开写工具不能被调用
+ok 49 - MCP未公开写工具不能被调用
+  ---
+  duration_ms: 0.419209
+  type: 'test'
+  ...
+# Subtest: MCP业务错误不会伪装成成功
+ok 50 - MCP业务错误不会伪装成成功
+  ---
+  duration_ms: 0.172875
+  type: 'test'
+  ...
+# Subtest: 所有推演示例的预期与实际一致
+ok 51 - 所有推演示例的预期与实际一致
+  ---
+  duration_ms: 7.071917
+  type: 'test'
+  ...
+# Subtest: 敏感性滑块保留其他约束，15倍比25倍少2个样本
+ok 52 - 敏感性滑块保留其他约束，15倍比25倍少2个样本
+  ---
+  duration_ms: 3.80725
+  type: 'test'
+  ...
+# Subtest: 三类字段异常均使原本入选的样本变为无法判断
+ok 53 - 三类字段异常均使原本入选的样本变为无法判断
+  ---
+  duration_ms: 1.26025
+  type: 'test'
+  ...
+# Subtest: 接口异常注入不生成新筛选结果
+ok 54 - 接口异常注入不生成新筛选结果
+  ---
+  duration_ms: 0.225917
+  type: 'test'
+  ...
+# Subtest: 偏好推荐可解释且不自动执行或删除既有约束
+ok 55 - 偏好推荐可解释且不自动执行或删除既有约束
+  ---
+  duration_ms: 0.315
+  type: 'test'
+  ...
+# Subtest: 低历史波动模板采用20%阈值，成长模板提高增长门槛
+ok 56 - 低历史波动模板采用20%阈值，成长模板提高增长门槛
+  ---
+  duration_ms: 0.090416
+  type: 'test'
+  ...
+# Subtest: 偏好未知枚举不可注入条件
+ok 57 - 偏好未知枚举不可注入条件
+  ---
+  duration_ms: 0.056875
+  type: 'test'
+  ...
+# Subtest: 策略表达保留指标口径、运算符和阈值
+ok 58 - 策略表达保留指标口径、运算符和阈值
+  ---
+  duration_ms: 0.065666
+  type: 'test'
+  ...
+# Subtest: 构造数据绝不进入真实自选股脚本
+ok 59 - 构造数据绝不进入真实自选股脚本
+  ---
+  duration_ms: 0.105667
+  type: 'test'
+  ...
+# Subtest: SuperMind脚本仅新建自选板块、不含交易指令且可追溯
+ok 60 - SuperMind脚本仅新建自选板块、不含交易指令且可追溯
+  ---
+  duration_ms: 0.124084
+  type: 'test'
+  ...
+# Subtest: 导出不伪称已经同步，不泄漏构造代码到真实名单
+ok 61 - 导出不伪称已经同步，不泄漏构造代码到真实名单
+  ---
+  duration_ms: 0.08125
+  type: 'test'
+  ...
+# Subtest: 修改条件后不能把旧候选名单作为新策略导出
+ok 62 - 修改条件后不能把旧候选名单作为新策略导出
+  ---
+  duration_ms: 0.063334
+  type: 'test'
+  ...
+1..62
+# tests 62
+# suites 0
+# pass 62
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4026.322416
+
+# Exit code: 0
+# Finished: 2026-10-19T11:17:48.228Z
