@@ -48,7 +48,7 @@ import AppearanceMenu from "@/components/appearance-menu";
 import Count from "@/components/count";
 import LiveCases from "@/components/live-cases";
 import StartGuide from "@/components/start-guide";
-import { researchScenarios, METRIC_GROUPS } from "@/lib/scenarios";
+import { researchScenarios, METRIC_GROUPS, CASE_CODES } from "@/lib/scenarios";
 import ConnectionCheck from "@/components/connection-check";
 import ResearchSignals from "@/components/research-signals";
 import { evidenceGroups } from "@/lib/research-summary";
@@ -1354,6 +1354,12 @@ export default function Home() {
                 const scene = researchScenarios.find((s) => s.id === id);
                 if (!scene) return;
                 switchMode("live");
+                setCodes(CASE_CODES.join(","));
+                setSnapshot(null);
+                setRun(null);
+                setPrevious(null);
+                setCompare([]);
+                setAuto(false);
                 setIntent(scene.question);
                 setConfirmed(false);
                 setDirty(true);
@@ -1419,6 +1425,8 @@ export default function Home() {
                       <button
                         className="text-button"
                         onClick={() => {
+                          version.current++;
+                          setBusy("");
                           setTab("workspace");
                           setConditions((cs) => [
                             ...cs,
