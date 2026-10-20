@@ -90,3 +90,10 @@ GitHub Actions真实通过：https://github.com/lzy75/mingce-stock-lab/actions/r
 
 ## SuperMind人工账户测试（2026-10-20）
 用户先只读查询得到空DataFrame，随后新建随机命名的独立测试板块；insert返回True，按名称回读得到Series，名称与000001.SZ、600519.SH两只固定样本一致。本次人工创建/回读通过，不计入92项自动测试，不证明网页一键同步已实现。未记录账户身份；脱敏元数据见SUPERMIND_MANUAL_ACCEPTANCE.json。重复执行、客户端互通及真实筛选名单脚本仍待验证。
+
+## 官方Skill远端执行与100项回归（后续验证）
+supermind-quant-developer已安装，run.py doctor及只读查询通过。产品用真实MCP快照生成的脚本在远端实际新建独立研究板块，回读代码一致；再次执行输出already_present；同名不同名单被拒绝，原名单保持不变。真实证据见SUPERMIND_REMOTE_ACCEPTANCE.json，不把CLI退出码0单独视为成功。
+
+新增8项Python脚本运行回归：创建回读、重复执行、同名冲突、创建False、回读不一致、空回读、错误返回类型和查询异常，共100/100通过。使用本地最小API替身，不访问真实账户，不依赖pandas安装；替身测试不代替上述独立远端验证。
+
+客户端显示由用户确认未通过，不能把研究板块写入描述为已同步客户端。当前浏览器工具获取状态超时，本轮导出面板文案未完成线上浏览器点击验收；构建和接口检查分别记录。

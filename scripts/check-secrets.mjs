@@ -2,9 +2,11 @@ import { readFile, readdir } from "node:fs/promises";
 import { parseEnv } from "node:util";
 import { execFileSync } from "node:child_process";
 let vars = {};
-try {
-  vars = parseEnv(await readFile(".dev.vars", "utf8"));
-} catch {}
+for (const file of [".dev.vars", ".env.ai.local", ".env.supermind.local"]) {
+  try {
+    vars = { ...vars, ...parseEnv(await readFile(file, "utf8")) };
+  } catch {}
+}
 const secrets = Object.entries(vars)
   .filter(([k, v]) => /KEY|TOKEN|SECRET/.test(k) && v.length > 12)
   .map(([, v]) => v);

@@ -38,13 +38,69 @@ export function supermindScript(
   if (!codes.length) throw Error("没有入选股票，不能创建空的自选同步脚本");
   if (codes.some((c) => !/^\d{6}\.(SH|SZ|BJ)$/.test(c)))
     throw Error("结果包含非标准真实股票代码");
+  if (new Set(codes).size !== codes.length)
+    throw Error("结果包含重复股票代码，请重新核对研究池");
   const spec = JSON.stringify({
     schema: "mingce-strategy-v1",
     conditions,
     snapshotId: run.snapshotId,
     note: "只记录本次筛选条件和快照标识，不保证同花顺重新筛选口径完全相同。",
   });
-  return `# 明策 → 同花顺 SuperMind 自选板块接续脚本\n# 需用户在已登录、有权限的SuperMind研究环境中检查后运行。\n# 仅新建自选板块；不调用下单、交易或覆盖已有板块接口。\n# 官方API: https://quant.10jqka.com.cn/view/help/4#custom_sector\nimport json\nfrom mindgo_api import custom_sector\nSTRATEGY = json.loads(${JSON.stringify(spec)})\nSYMBOLS = ${JSON.stringify(codes)}\nSECTOR_NAME = ${JSON.stringify(sector.trim())}\n\n# 若名称已存在，创建应失败；请换新名称，不自动覆盖。\ncustom_sector(name=SECTOR_NAME, action='insert', symbol=SYMBOLS)\nprint(custom_sector(name=SECTOR_NAME))\nprint('请核对返回的板块名称和股票代码；此处未验证手机/PC自选互通。')\n`;
+  return `# 明策 → SuperMind 研究板块接续脚本
+# 需在本人已授权的SuperMind环境检查后运行；不代表行情客户端自选同步。
+# 仅新建独立板块；同名同内容重复运行不再写入，同名不同内容拒绝覆盖。
+# 官方API: https://quant.10jqka.com.cn/view/help/4#custom_sector
+import json
+import pandas as pd
+from mindgo_api import custom_sector
+
+STRATEGY = json.loads(${JSON.stringify(spec)})
+SYMBOLS = ${JSON.stringify(codes)}
+SECTOR_NAME = ${JSON.stringify(sector.trim())}
+
+
+def read_sector():
+    row = custom_sector(name=SECTOR_NAME)
+    if not isinstance(row, pd.Series):
+        raise RuntimeError('板块查询返回类型异常，未继续写入。')
+    return row
+
+
+def matches(row):
+    if row.empty:
+        return False
+    if 'name' not in row.index or 'symbol' not in row.index:
+        raise RuntimeError('板块查询缺少名称或股票代码，无法核验。')
+    actual = row['symbol']
+    return (row['name'] == SECTOR_NAME and isinstance(actual, list)
+            and len(actual) == len(SYMBOLS) and set(actual) == set(SYMBOLS))
+
+
+def main():
+    print('正在查询SuperMind研究板块…')
+    before = read_sector()
+    if before.empty:
+        created = custom_sector(name=SECTOR_NAME, action='insert', symbol=SYMBOLS)
+        if created is not True:
+            raise RuntimeError('创建未返回True，未标记成功；请按名称查询后核对。')
+        state = 'created'
+    elif matches(before):
+        state = 'already_present'
+    else:
+        raise RuntimeError('同名板块已存在且内容不同，未覆盖；请换一个新名称。')
+    after = read_sector()
+    if not matches(after):
+        raise RuntimeError('回读与本次名单不一致，未标记成功；请核对目标板块。')
+    print(json.dumps({'event': 'mingce_supermind_transfer', 'state': state,
+                      'verified': True, 'sector': SECTOR_NAME, 'symbols': SYMBOLS,
+                      'snapshotId': STRATEGY['snapshotId'],
+                      'clientSync': 'unverified'}, ensure_ascii=False))
+    print('SuperMind研究板块回读一致；行情客户端自选同步未验证。')
+
+
+if __name__ == '__main__':
+    main()
+`;
 }
 export function transferManifest(conditions: Condition[], run: Run | null) {
   const current =

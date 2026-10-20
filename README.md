@@ -99,7 +99,7 @@ npm run security:check
 - [构建前验收基线](docs/ACCEPTANCE.md)
 - [AI使用与验证记录](docs/AI_USAGE.md)
 - [测试说明与边界](docs/TESTING.md)
-- [实际自动测试输出](docs/test-results.tap)（92项）
+- [实际自动测试输出](docs/test-results.tap)（100项）
 - [官方MCP实际联调元数据](docs/MCP_VALIDATION.json)
 - [网页服务端到端联调元数据](docs/WEB_VALIDATION.json)
 - [设计方向与复核](docs/DESIGN_REVIEW.md)

@@ -94,7 +94,7 @@ export default function TransferPanel({
         </button>
 
         <h2 id="transfer-title">导出到同花顺</h2>
-        <p>复制策略到 i问财，或生成 SuperMind 自选板块脚本。</p>
+        <p>复制策略到 i问财，或将名单接续到 SuperMind 研究板块。</p>
         <div className="transfer-tabs">
           <button
             className={section === "strategy" ? "active" : ""}
@@ -147,10 +147,10 @@ export default function TransferPanel({
           <>
             <div className="transfer-step">
               <div>
-                <h3>生成官方自选板块接续脚本</h3>
+                <h3>导出 SuperMind 研究板块</h3>
                 <p>
                   使用SuperMind官方 custom_sector API
-                  新建板块，仅含本次入选代码和策略定义，不含交易指令。
+                  新建板块并核对回读；同名同名单重复运行不再写入。
                 </p>
               </div>
             </div>
@@ -205,8 +205,7 @@ export default function TransferPanel({
                 </div>
                 <p className="transfer-small">
                   在已登录的 SuperMind
-                  中检查后运行，再回读板块名称与代码核验。手机/PC
-                  自选互通尚未验证。
+                  中运行。脚本自动核对板块名称与代码；同名不同内容会拒绝覆盖。该操作不代表手机/PC行情客户端自选同步。
                 </p>
               </>
             )}
