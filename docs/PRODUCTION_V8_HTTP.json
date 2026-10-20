@@ -1,0 +1,105 @@
+{
+  "at": "2026-10-20T02:23:37.701Z",
+  "base": "https://mingce-stock-lab.justslug1.chatgpt.site",
+  "passed": true,
+  "checks": [
+    {
+      "name": "服务端配置状态",
+      "at": "2026-10-20T02:23:27.880Z",
+      "http": 200,
+      "ms": 136,
+      "passed": true,
+      "dataConfigured": true,
+      "aiConfigured": true
+    },
+    {
+      "name": "语义主链路",
+      "at": "2026-10-20T02:23:28.016Z",
+      "http": 200,
+      "ms": 2058,
+      "passed": true,
+      "engine": "model",
+      "model": "deepseek-flash",
+      "conditions": 5
+    },
+    {
+      "name": "显式阈值模型不增减条件",
+      "at": "2026-10-20T02:23:30.074Z",
+      "http": 200,
+      "ms": 965,
+      "passed": true,
+      "engine": "model",
+      "conditions": 2
+    },
+    {
+      "name": "错单位拦截",
+      "at": "2026-10-20T02:23:31.039Z",
+      "http": 200,
+      "ms": 31,
+      "passed": true
+    },
+    {
+      "name": "未支持附加要求不丢弃",
+      "at": "2026-10-20T02:23:31.070Z",
+      "http": 200,
+      "ms": 33,
+      "passed": true
+    },
+    {
+      "name": "非法JSON",
+      "at": "2026-10-20T02:23:31.103Z",
+      "http": 400,
+      "ms": 28,
+      "passed": true
+    },
+    {
+      "name": "非法研究池",
+      "at": "2026-10-20T02:23:31.131Z",
+      "http": 400,
+      "ms": 151,
+      "passed": true
+    },
+    {
+      "name": "空指标请求",
+      "at": "2026-10-20T02:23:31.282Z",
+      "http": 400,
+      "ms": 30,
+      "passed": true
+    },
+    {
+      "name": "跨站请求",
+      "at": "2026-10-20T02:23:31.312Z",
+      "http": 403,
+      "ms": 46,
+      "passed": true
+    },
+    {
+      "name": "真实MCP研究池",
+      "at": "2026-10-20T02:23:31.358Z",
+      "http": 200,
+      "ms": 6343,
+      "passed": true,
+      "stocks": 2,
+      "transport": [
+        "MCP"
+      ],
+      "tools": [
+        "get_a_share_valuations_snapshot",
+        "get_a_share_prices_snapshot",
+        "get_a_share_financials_income_statements",
+        "get_a_share_prices_historical"
+      ],
+      "requestIds": [
+        "29a07fa6c7eb444fa84674f0a97b8561",
+        "81cee51d7c724c0085715b5a685a2259",
+        "ddbc268009f045e39baa491078207234",
+        "3bfb34fd833e4e80a517cee1aff02cb6",
+        "67909d9e4844478690c4e63499f5026e",
+        "4e41d5805aad40a9a034d479f1fcd34e"
+      ],
+      "qualities": [
+        "ok"
+      ]
+    }
+  ]
+}

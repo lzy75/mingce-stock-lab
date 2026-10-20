@@ -1,0 +1,66 @@
+{
+  "verificationId": "14935192-47dc-4a42-9500-c5d63b4bbb98",
+  "events": [
+    {
+      "timestamp": 1792463007651,
+      "requestId": "84ae07069d379820a5a70332022dfa18",
+      "rayId": "a4d48f39d914176d",
+      "trigger": "POST /api/acceptance",
+      "source": {
+        "level": "info",
+        "message": "POST https://mingce-stock-lab.justslug1.chatgpt.site/api/acceptance"
+      },
+      "response": {
+        "status": 200
+      },
+      "outcome": "ok"
+    },
+    {
+      "timestamp": 1792463007651,
+      "requestId": "84ae07069d379820a5a70332022dfa18",
+      "rayId": "a4d48f39d914176d",
+      "trigger": "POST /api/acceptance",
+      "source": {
+        "level": "info",
+        "event": "mingce_acceptance",
+        "verificationId": "14935192-47dc-4a42-9500-c5d63b4bbb98",
+        "state": "partial",
+        "cases": [
+          {
+            "id": "balanced",
+            "engine": "model",
+            "model": "deepseek-flash",
+            "counts": {
+              "pass": 3,
+              "fail": 1,
+              "unknown": 0,
+              "total": 4
+            }
+          },
+          {
+            "id": "cash",
+            "engine": "model",
+            "model": "deepseek-flash",
+            "counts": {
+              "pass": 1,
+              "fail": 3,
+              "unknown": 0,
+              "total": 4
+            }
+          },
+          {
+            "id": "trend",
+            "engine": "model",
+            "model": "deepseek-flash",
+            "counts": {
+              "pass": 4,
+              "fail": 0,
+              "unknown": 0,
+              "total": 4
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

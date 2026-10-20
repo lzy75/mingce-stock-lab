@@ -6,6 +6,8 @@
 
 **GitHub：** https://github.com/lzy75/mingce-stock-lab
 
+**最新验收（2026-10-20，第8版）：** [GitHub独立生产检查通过](https://github.com/lzy75/mingce-stock-lab/actions/runs/39358602909)：3组真实模型/MCP案例、10项公开HTTP检查、24只股票分两批读取均完成；现金流案例2项字段依据不足保留partial。92项自动回归、类型检查、生产构建与密钥扫描通过。[当前交付状态与历史失败](docs/DEPLOYMENT.md) · [SuperMind具体操作](docs/SUPERMIND_GUIDE.md)。
+
 ## 快速体验
 1. 首屏只有一个宽大的策略输入框，选择6类研究场景或描述模糊偏好；条件核对、名单和原始证据依次在下方。
 2. 修改研究描述，点击“用 AI 拆解我的策略”或“拆解为筛选条件”。检查模糊词代理定义、阈值和范围。
@@ -97,7 +99,7 @@ npm run security:check
 - [构建前验收基线](docs/ACCEPTANCE.md)
 - [AI使用与验证记录](docs/AI_USAGE.md)
 - [测试说明与边界](docs/TESTING.md)
-- [实际自动测试输出](docs/test-results.tap)（88项）
+- [实际自动测试输出](docs/test-results.tap)（92项）
 - [官方MCP实际联调元数据](docs/MCP_VALIDATION.json)
 - [网页服务端到端联调元数据](docs/WEB_VALIDATION.json)
 - [设计方向与复核](docs/DESIGN_REVIEW.md)
