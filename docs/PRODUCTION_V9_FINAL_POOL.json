@@ -1,0 +1,15 @@
+{
+  "at": "2026-10-20T03:26:10.065Z",
+  "origin": "https://mingce-stock-lab.justslug1.chatgpt.site",
+  "requested": 24,
+  "passed": false,
+  "progress": [
+    {
+      "completed": 0,
+      "total": 2,
+      "stocksDone": 0,
+      "stocksTotal": 24
+    }
+  ],
+  "error": "第1/2批：扶摇MCP HTTP 522 · 请求ID a4d4eb61ef59f6b1-LAX；本次未生成新名单。"
+}

@@ -1,8 +1,14 @@
 # 交付与部署状态（2026-10-20）
 
 ## 当前状态（优先于后面的历史记录）
+- 第9版最终复测[39364183584](https://github.com/lzy75/mingce-stock-lab/actions/runs/39364183584)未通过：工作流源码与已发布应用同为1a2b445；AI解析/显式条件/输入边界均通过，真实数据接口及三案例因超时返回502，24只研究池第1批上游HTTP522（请求标识a4d4eb61ef59f6b1-LAX），未生成部分正常名单。当前不能宣称生产数据链路持续可用；第8版通过记录仅作历史证据。
+- 最新失败证据：[三案例](PRODUCTION_V9_FINAL_ACCEPTANCE.json)、[公开接口](PRODUCTION_V9_FINAL_HTTP.json)、[24只分批](PRODUCTION_V9_FINAL_POOL.json)。远端SuperMind板块验收是独立链路，已通过的写入/回读不能代替扶摇行情可用性。
+- 11:29（北京时间）本机直连同一扶摇MCP行情工具返回业务码0、两只固定样本完整，见[本机对照](PRODUCTION_V9_LOCAL_COMPARISON.json)。这证明该时点直连可用，不代表托管Worker出站已恢复；地域/网络路径或服务端差异的具体根因未确定。
+- 第9版于2026-10-20 11:17（北京时间）成功发布，应用源码1a2b4459d384987a3c292116cc1746b5eaed06fd；[相同源码CI通过](https://github.com/lzy75/mingce-stock-lab/actions/runs/39364084201)，含100项自动回归。
+- 首次公开复测[39363704983](https://github.com/lzy75/mingce-stock-lab/actions/runs/39363704983)：三案例和24只分批通过；HTTP边界9/10通过，单独MCP接口因上游请求超时返回502。保留[失败项原始元数据](PRODUCTION_V9_HTTP_FIRST.json)，不将整次流程记为通过。此任务使用89a3cdd工作流源码，验收脚本与第9版相同，被测公开网页已发布为第9版。
+- Git传输端点连续连接失败，改用已授权官方GitHub API补齐同一文件树和提交对象；逐一核对blob/tree/commit SHA完全一致后非强制更新main，未改变已发布源码。
 - 新增SuperMind远端实际验收：产品生成脚本创建→回读一致、重复运行不重复写入、同名不同内容拒绝覆盖，均通过。用户反馈同手机号客户端仍无测试分组，客户端显示记为未通过，网页账户一键同步仍未实现。证据见[远端验收](SUPERMIND_REMOTE_ACCEPTANCE.json)。
-- 最新第8版已成功公开发布，应用源码70079157396f1f98987d8abe46df67eba204e0f2。2026-10-20 10:23（北京时间）独立生产验收通过：[三类检查](https://github.com/lzy75/mingce-stock-lab/actions/runs/39358602909)；[相同应用源码CI通过](https://github.com/lzy75/mingce-stock-lab/actions/runs/39358480392)。
+- 第8版历史记录：应用源码70079157396f1f98987d8abe46df67eba204e0f2。2026-10-20 10:23（北京时间）独立生产验收通过：[三类检查](https://github.com/lzy75/mingce-stock-lab/actions/runs/39358602909)；[相同应用源码CI通过](https://github.com/lzy75/mingce-stock-lab/actions/runs/39358480392)。
 - 实际模型为deepseek-flash，三案例均有模型调用ID和MCP证据；公开HTTP10/10通过。24只真实股票2批完整读取：入选20、排除3、无法判断1（PE>0且≤25），未把无法判断归入通过。
 - 三案例链路通过但现金流案例存在2项字段依据不足，整体证据状态partial。验收ID14935192-47dc-4a42-9500-c5d63b4bbb98与Worker日志匹配，生产POST /api/acceptance HTTP200，requestId=84ae07069d379820a5a70332022dfa18。
 - 本次第8版复测恢复，不能推断之前530的根因已永久消除；保留两次失败记录。后续若再现530，使用安全透传的诊断编号交由服务方定位，不反复更换有效Key。
@@ -10,7 +16,7 @@
 - 第7版独立生产验收两次失败：2026-10-19 21:12与2026-10-20 10:15（北京时间），公开入口与配置返回200；真实案例在扶摇MCP环节返回HTTP530，应用返回502。不是旧403入口问题，不能使用第6版通过记录替代本次结果。
 - 2026-10-20本机使用同一授权直连官方文档、MCP初始化与REST行情均HTTP200；线上与本机存在出站链路差异。Cloudflare官方将530定义为源站域名解析问题，具体子码需线上诊断确认：https://developers.cloudflare.com/support/troubleshooting/http-status-codes/cloudflare-5xx-errors/error-530/
 - 新增MCP530诊断编号及请求标识透传；只保留数字错误码，不回传上游HTML或密钥。验收摘要保留业务错误；错误HTTP不能被内容检查覆盖为通过。三类生产检查独立运行，整体失败仍保留失败状态。
-- 当前100项自动测试及类型检查通过；本轮新增8项实际执行生成Python脚本的边界回归。生产构建/发布结果在本轮完成后追加；旧生产结果仅代表相应版本。密钥扫描覆盖本机SuperMind授权文件中的实际Key，文件与Key均不进入源码。
+- 当前100项自动测试、类型检查、生产构建和第9版发布均通过；本轮新增8项实际执行生成Python脚本的边界回归。密钥扫描覆盖212个跟踪/客户端文件及本机SuperMind实际Key，授权文件与Key均不进入源码。线上浏览器工具本轮超时，未将接口结果代替浏览器点击验收。
 
 本次机器证据：[三案例](PRODUCTION_V8_ACCEPTANCE.json)、[公开接口](PRODUCTION_V8_HTTP.json)、[24只分批](PRODUCTION_V8_POOL.json)、[Worker验收关联](PRODUCTION_V8_WORKER_PROOF.json)、[第7版两次失败](PRODUCTION_V7_FAILURES.json)。源码提交之后仅更新本组文档，不改变已发布应用。
 

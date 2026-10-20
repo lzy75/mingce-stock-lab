@@ -1,0 +1,90 @@
+{
+  "at": "2026-10-20T03:26:09.659Z",
+  "base": "https://mingce-stock-lab.justslug1.chatgpt.site",
+  "passed": false,
+  "checks": [
+    {
+      "name": "服务端配置状态",
+      "at": "2026-10-20T03:25:44.703Z",
+      "http": 200,
+      "ms": 220,
+      "passed": true,
+      "dataConfigured": true,
+      "aiConfigured": true
+    },
+    {
+      "name": "语义主链路",
+      "at": "2026-10-20T03:25:44.923Z",
+      "http": 200,
+      "ms": 2200,
+      "passed": true,
+      "engine": "model",
+      "model": "deepseek-flash",
+      "conditions": 5
+    },
+    {
+      "name": "显式阈值模型不增减条件",
+      "at": "2026-10-20T03:25:47.123Z",
+      "http": 200,
+      "ms": 1587,
+      "passed": true,
+      "engine": "model",
+      "conditions": 2
+    },
+    {
+      "name": "错单位拦截",
+      "at": "2026-10-20T03:25:48.711Z",
+      "http": 200,
+      "ms": 123,
+      "passed": true
+    },
+    {
+      "name": "未支持附加要求不丢弃",
+      "at": "2026-10-20T03:25:48.834Z",
+      "http": 200,
+      "ms": 71,
+      "passed": true
+    },
+    {
+      "name": "非法JSON",
+      "at": "2026-10-20T03:25:48.905Z",
+      "http": 400,
+      "ms": 50,
+      "passed": true
+    },
+    {
+      "name": "非法研究池",
+      "at": "2026-10-20T03:25:48.955Z",
+      "http": 400,
+      "ms": 189,
+      "passed": true
+    },
+    {
+      "name": "空指标请求",
+      "at": "2026-10-20T03:25:49.144Z",
+      "http": 400,
+      "ms": 336,
+      "passed": true
+    },
+    {
+      "name": "跨站请求",
+      "at": "2026-10-20T03:25:49.480Z",
+      "http": 403,
+      "ms": 105,
+      "passed": true
+    },
+    {
+      "name": "真实MCP研究池",
+      "at": "2026-10-20T03:25:49.585Z",
+      "http": 502,
+      "ms": 20074,
+      "passed": false,
+      "transport": [],
+      "tools": [],
+      "requestIds": [],
+      "qualities": [],
+      "reason": "The operation was aborted due to timeout",
+      "code": 23
+    }
+  ]
+}

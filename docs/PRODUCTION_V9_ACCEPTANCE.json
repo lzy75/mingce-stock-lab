@@ -1,0 +1,852 @@
+{
+  "schema": "mingce-production-acceptance-v1",
+  "at": "2026-10-20T03:19:51.633Z",
+  "origin": "https://mingce-stock-lab.justslug1.chatgpt.site",
+  "runner": "GitHub Actions",
+  "checks": [
+    {
+      "name": "生产配置与版本能力",
+      "http": 200,
+      "ms": 1246,
+      "passed": true,
+      "metricCount": 15,
+      "aiConfigured": true,
+      "dataConfigured": true,
+      "accountWrite": false
+    },
+    {
+      "name": "三场景模型→真实数据→确定性筛选→证据",
+      "http": 200,
+      "ms": 28045,
+      "passed": true,
+      "state": "partial",
+      "verificationId": "1da54e18-d48b-45c4-9671-bc106d2286d3",
+      "cached": false,
+      "cases": [
+        {
+          "caseId": "balanced",
+          "state": "passed",
+          "counts": {
+            "pass": 3,
+            "fail": 1,
+            "unknown": 0,
+            "total": 4
+          },
+          "gaps": 0,
+          "model": "deepseek-flash",
+          "modelRequestId": "001e52d7-f765-4dd9-8721-308ccb209ae6"
+        },
+        {
+          "caseId": "cash",
+          "state": "partial",
+          "counts": {
+            "pass": 1,
+            "fail": 3,
+            "unknown": 0,
+            "total": 4
+          },
+          "gaps": 2,
+          "model": "deepseek-flash",
+          "modelRequestId": "6dfec1f4-cc58-43d4-a529-ff7af764659b"
+        },
+        {
+          "caseId": "trend",
+          "state": "passed",
+          "counts": {
+            "pass": 4,
+            "fail": 0,
+            "unknown": 0,
+            "total": 4
+          },
+          "gaps": 0,
+          "model": "deepseek-flash",
+          "modelRequestId": "d6e6b253-72c0-42df-8871-8f6ea337c7c2"
+        }
+      ]
+    }
+  ],
+  "caseReport": {
+    "schema": "mingce-acceptance-v2",
+    "verificationId": "1da54e18-d48b-45c4-9671-bc106d2286d3",
+    "at": "2026-10-20T03:19:53.771Z",
+    "completedAt": "2026-10-20T03:20:20.897Z",
+    "state": "partial",
+    "metricCount": 15,
+    "snapshotId": "1e22eac1-3dab-40dc-a25a-62d930f9d7e2",
+    "snapshotAt": "2026-10-20T03:20:02.000Z",
+    "fetchedAt": "2026-10-20T03:20:20.897Z",
+    "transport": [
+      "MCP"
+    ],
+    "cases": [
+      {
+        "caseId": "balanced",
+        "title": "经营与估值",
+        "state": "passed",
+        "engine": "model",
+        "model": "deepseek-flash",
+        "modelRequestId": "001e52d7-f765-4dd9-8721-308ccb209ae6",
+        "conditions": [
+          {
+            "id": "c1",
+            "metric": "revenueGrowth",
+            "op": ">",
+            "value": 0,
+            "enabled": true
+          },
+          {
+            "id": "c2",
+            "metric": "profitGrowth",
+            "op": ">",
+            "value": 0,
+            "enabled": true
+          },
+          {
+            "id": "c3",
+            "metric": "pe",
+            "op": ">",
+            "value": 0,
+            "enabled": true
+          },
+          {
+            "id": "c4",
+            "metric": "pe",
+            "op": "<=",
+            "value": 25,
+            "enabled": true
+          },
+          {
+            "id": "c5",
+            "metric": "volatility",
+            "op": "<=",
+            "value": 30,
+            "enabled": true
+          }
+        ],
+        "counts": {
+          "pass": 3,
+          "fail": 1,
+          "unknown": 0,
+          "total": 4
+        },
+        "gaps": 0,
+        "stocks": [
+          {
+            "code": "000333.SZ",
+            "name": "美的集团",
+            "status": "pass",
+            "checks": [
+              {
+                "metric": "revenueGrowth",
+                "status": "pass",
+                "field": "operating_income",
+                "asOf": "2026-08-28T16:00:00.000Z",
+                "unit": "%",
+                "quality": "ok",
+                "requestId": "9c6d7daa2abb42f5962c6697e4d48bcd",
+                "tool": "get_a_share_financials_income_statements"
+              },
+              {
+                "metric": "profitGrowth",
+                "status": "pass",
+                "field": "parent_holder_net_profit",
+                "asOf": "2026-08-28T16:00:00.000Z",
+                "unit": "%",
+                "quality": "ok",
+                "requestId": "9c6d7daa2abb42f5962c6697e4d48bcd",
+                "tool": "get_a_share_financials_income_statements"
+              },
+              {
+                "metric": "pe",
+                "status": "pass",
+                "field": "pe_ttm",
+                "asOf": "2026-10-20T03:20:04.000Z",
+                "unit": "倍",
+                "quality": "ok",
+                "requestId": "e82195e511c64b7d96d00d7ed2c247f2",
+                "tool": "get_a_share_valuations_snapshot"
+              },
+              {
+                "metric": "pe",
+                "status": "pass",
+                "field": "pe_ttm",
+                "asOf": "2026-10-20T03:20:04.000Z",
+                "unit": "倍",
+                "quality": "ok",
+                "requestId": "e82195e511c64b7d96d00d7ed2c247f2",
+                "tool": "get_a_share_valuations_snapshot"
+              },
+              {
+                "metric": "volatility",
+                "status": "pass",
+                "field": "close_price → sampleSD(simpleDailyReturns) × sqrt(252) × 100",
+                "asOf": "2026-10-18T16:00:00.000Z",
+                "unit": "%",
+                "quality": "ok",
+                "requestId": "5d79e42646b44a7e84946ca50d18e177",
+                "tool": "get_a_share_prices_historical"
+              }
+            ]
+          },
+          {
+            "code": "000858.SZ",
+            "name": "五粮液",
+            "status": "pass",
+            "checks": [
+              {
+                "metric": "revenueGrowth",
+                "status": "pass",
+                "field": "operating_income",
+                "asOf": "2026-08-28T16:00:00.000Z",
+                "unit": "%",
+                "quality": "ok",
+                "requestId": "f45e3e960ae0449e8d42c07e00eaaa68",
+                "tool": "get_a_share_financials_income_statements"
+              },
+              {
+                "metric": "profitGrowth",
+                "status": "pass",
+                "field": "parent_holder_net_profit",
+                "asOf": "2026-08-28T16:00:00.000Z",
+                "unit": "%",
+                "quality": "ok",
+                "requestId": "f45e3e960ae0449e8d42c07e00eaaa68",
+                "tool": "get_a_share_financials_income_statements"
+              },
+              {
+                "metric": "pe",
+                "status": "pass",
+                "field": "pe_ttm",
+                "asOf": "2026-10-20T03:20:04.000Z",
+                "unit": "倍",
+                "quality": "ok",
+                "requestId": "e82195e511c64b7d96d00d7ed2c247f2",
+                "tool": "get_a_share_valuations_snapshot"
+              },
+              {
+                "metric": "pe",
+                "status": "pass",
+                "field": "pe_ttm",
+                "asOf": "2026-10-20T03:20:04.000Z",
+                "unit": "倍",
+                "quality": "ok",
+                "requestId": "e82195e511c64b7d96d00d7ed2c247f2",
+                "tool": "get_a_share_valuations_snapshot"
+              },
+              {
+                "metric": "volatility",
+                "status": "pass",
+                "field": "close_price → sampleSD(simpleDailyReturns) × sqrt(252) × 100",
+                "asOf": "2026-10-18T16:00:00.000Z",
+                "unit": "%",
+                "quality": "ok",
+                "requestId": "0c84f669ef1f47c78a8319f205c1e10e",
+                "tool": "get_a_share_prices_historical"
+              }
+            ]
+          },
+          {
+            "code": "600036.SH",
+            "name": "招商银行",
+            "status": "pass",
+            "checks": [
+              {
+                "metric": "revenueGrowth",
+                "status": "pass",
+                "field": "operating_income",
+                "asOf": "2026-08-28T16:00:00.000Z",
+                "unit": "%",
+                "quality": "ok",
+                "requestId": "7f8cdfeb05cd4eedae9528726f9a687d",
+                "tool": "get_a_share_financials_income_statements"
+              },
+              {
+                "metric": "profitGrowth",
+                "status": "pass",
+                "field": "parent_holder_net_profit",
+                "asOf": "2026-08-28T16:00:00.000Z",
+                "unit": "%",
+                "quality": "ok",
+                "requestId": "7f8cdfeb05cd4eedae9528726f9a687d",
+                "tool": "get_a_share_financials_income_statements"
+              },
+              {
+                "metric": "pe",
+                "status": "pass",
+                "field": "pe_ttm",
+                "asOf": "2026-10-20T03:20:04.000Z",
+                "unit": "倍",
+                "quality": "ok",
+                "requestId": "e82195e511c64b7d96d00d7ed2c247f2",
+                "tool": "get_a_share_valuations_snapshot"
+              },
+              {
+                "metric": "pe",
+                "status": "pass",
+                "field": "pe_ttm",
+                "asOf": "2026-10-20T03:20:04.000Z",
+                "unit": "倍",
+                "quality": "ok",
+                "requestId": "e82195e511c64b7d96d00d7ed2c247f2",
+                "tool": "get_a_share_valuations_snapshot"
+              },
+              {
+                "metric": "volatility",
+                "status": "pass",
+                "field": "close_price → sampleSD(simpleDailyReturns) × sqrt(252) × 100",
+                "asOf": "2026-10-18T16:00:00.000Z",
+                "unit": "%",
+                "quality": "ok",
+                "requestId": "2e4d92d41aad4b3d8bc7aab873baa904",
+                "tool": "get_a_share_prices_historical"
+              }
+            ]
+          },
+          {
+            "code": "600519.SH",
+            "name": "贵州茅台",
+            "status": "fail",
+            "checks": [
+              {
+                "metric": "revenueGrowth",
+                "status": "pass",
+                "field": "operating_income",
+                "asOf": "2026-08-14T16:00:00.000Z",
+                "unit": "%",
+                "quality": "ok",
+                "requestId": "cd4af12b2f7e440aa473c5cba167c678",
+                "tool": "get_a_share_financials_income_statements"
+              },
+              {
+                "metric": "profitGrowth",
+                "status": "fail",
+                "field": "parent_holder_net_profit",
+                "asOf": "2026-08-14T16:00:00.000Z",
+                "unit": "%",
+                "quality": "ok",
+                "requestId": "cd4af12b2f7e440aa473c5cba167c678",
+                "tool": "get_a_share_financials_income_statements"
+              },
+              {
+                "metric": "pe",
+                "status": "pass",
+                "field": "pe_ttm",
+                "asOf": "2026-10-20T03:20:04.000Z",
+                "unit": "倍",
+                "quality": "ok",
+                "requestId": "e82195e511c64b7d96d00d7ed2c247f2",
+                "tool": "get_a_share_valuations_snapshot"
+              },
+              {
+                "metric": "pe",
+                "status": "pass",
+                "field": "pe_ttm",
+                "asOf": "2026-10-20T03:20:04.000Z",
+                "unit": "倍",
+                "quality": "ok",
+                "requestId": "e82195e511c64b7d96d00d7ed2c247f2",
+                "tool": "get_a_share_valuations_snapshot"
+              },
+              {
+                "metric": "volatility",
+                "status": "pass",
+                "field": "close_price → sampleSD(simpleDailyReturns) × sqrt(252) × 100",
+                "asOf": "2026-10-18T16:00:00.000Z",
+                "unit": "%",
+                "quality": "ok",
+                "requestId": "35f8c8b1c9a244bbb06d313effe316cf",
+                "tool": "get_a_share_prices_historical"
+              }
+            ]
+          }
+        ],
+        "stages": [
+          {
+            "name": "AI解析",
+            "state": "passed"
+          },
+          {
+            "name": "金融数据",
+            "state": "passed"
+          },
+          {
+            "name": "确定性筛选",
+            "state": "passed"
+          },
+          {
+            "name": "证据核查",
+            "state": "passed"
+          }
+        ]
+      },
+      {
+        "caseId": "cash",
+        "title": "现金流估值",
+        "state": "partial",
+        "engine": "model",
+        "model": "deepseek-flash",
+        "modelRequestId": "6dfec1f4-cc58-43d4-a529-ff7af764659b",
+        "conditions": [
+          {
+            "id": "c1",
+            "metric": "ps",
+            "op": "<=",
+            "value": 3,
+            "enabled": true
+          },
+          {
+            "id": "c2",
+            "metric": "pcf",
+            "op": ">",
+            "value": 0,
+            "enabled": true
+          },
+          {
+            "id": "c3",
+            "metric": "pcf",
+            "op": "<=",
+            "value": 20,
+            "enabled": true
+          }
+        ],
+        "counts": {
+          "pass": 1,
+          "fail": 3,
+          "unknown": 0,
+          "total": 4
+        },
+        "gaps": 2,
+        "stocks": [
+          {
+            "code": "000333.SZ",
+            "name": "美的集团",
+            "status": "pass",
+            "checks": [
+              {
+                "metric": "ps",
+                "status": "pass",
+                "field": "ps_ttm",
+                "asOf": "2026-10-20T03:20:04.000Z",
+                "unit": "倍",
+                "quality": "ok",
+                "requestId": "e82195e511c64b7d96d00d7ed2c247f2",
+                "tool": "get_a_share_valuations_snapshot"
+              },
+              {
+                "metric": "pcf",
+                "status": "pass",
+                "field": "pcf_ttm",
+                "asOf": "2026-10-20T03:20:04.000Z",
+                "unit": "倍",
+                "quality": "ok",
+                "requestId": "e82195e511c64b7d96d00d7ed2c247f2",
+                "tool": "get_a_share_valuations_snapshot"
+              },
+              {
+                "metric": "pcf",
+                "status": "pass",
+                "field": "pcf_ttm",
+                "asOf": "2026-10-20T03:20:04.000Z",
+                "unit": "倍",
+                "quality": "ok",
+                "requestId": "e82195e511c64b7d96d00d7ed2c247f2",
+                "tool": "get_a_share_valuations_snapshot"
+              }
+            ]
+          },
+          {
+            "code": "000858.SZ",
+            "name": "五粮液",
+            "status": "fail",
+            "checks": [
+              {
+                "metric": "ps",
+                "status": "fail",
+                "field": "ps_ttm",
+                "asOf": "2026-10-20T03:20:04.000Z",
+                "unit": "倍",
+                "quality": "ok",
+                "requestId": "e82195e511c64b7d96d00d7ed2c247f2",
+                "tool": "get_a_share_valuations_snapshot"
+              },
+              {
+                "metric": "pcf",
+                "status": "unknown",
+                "reason": "市现率 TTM非正，不能作为有效的正值筛选依据",
+                "field": "pcf_ttm",
+                "asOf": "2026-10-20T03:20:04.000Z",
+                "unit": "倍",
+                "quality": "ok",
+                "requestId": "e82195e511c64b7d96d00d7ed2c247f2",
+                "tool": "get_a_share_valuations_snapshot"
+              },
+              {
+                "metric": "pcf",
+                "status": "unknown",
+                "reason": "市现率 TTM非正，不能作为有效的正值筛选依据",
+                "field": "pcf_ttm",
+                "asOf": "2026-10-20T03:20:04.000Z",
+                "unit": "倍",
+                "quality": "ok",
+                "requestId": "e82195e511c64b7d96d00d7ed2c247f2",
+                "tool": "get_a_share_valuations_snapshot"
+              }
+            ]
+          },
+          {
+            "code": "600036.SH",
+            "name": "招商银行",
+            "status": "fail",
+            "checks": [
+              {
+                "metric": "ps",
+                "status": "fail",
+                "field": "ps_ttm",
+                "asOf": "2026-10-20T03:20:04.000Z",
+                "unit": "倍",
+                "quality": "ok",
+                "requestId": "e82195e511c64b7d96d00d7ed2c247f2",
+                "tool": "get_a_share_valuations_snapshot"
+              },
+              {
+                "metric": "pcf",
+                "status": "pass",
+                "field": "pcf_ttm",
+                "asOf": "2026-10-20T03:20:04.000Z",
+                "unit": "倍",
+                "quality": "ok",
+                "requestId": "e82195e511c64b7d96d00d7ed2c247f2",
+                "tool": "get_a_share_valuations_snapshot"
+              },
+              {
+                "metric": "pcf",
+                "status": "pass",
+                "field": "pcf_ttm",
+                "asOf": "2026-10-20T03:20:04.000Z",
+                "unit": "倍",
+                "quality": "ok",
+                "requestId": "e82195e511c64b7d96d00d7ed2c247f2",
+                "tool": "get_a_share_valuations_snapshot"
+              }
+            ]
+          },
+          {
+            "code": "600519.SH",
+            "name": "贵州茅台",
+            "status": "fail",
+            "checks": [
+              {
+                "metric": "ps",
+                "status": "fail",
+                "field": "ps_ttm",
+                "asOf": "2026-10-20T03:20:04.000Z",
+                "unit": "倍",
+                "quality": "ok",
+                "requestId": "e82195e511c64b7d96d00d7ed2c247f2",
+                "tool": "get_a_share_valuations_snapshot"
+              },
+              {
+                "metric": "pcf",
+                "status": "pass",
+                "field": "pcf_ttm",
+                "asOf": "2026-10-20T03:20:04.000Z",
+                "unit": "倍",
+                "quality": "ok",
+                "requestId": "e82195e511c64b7d96d00d7ed2c247f2",
+                "tool": "get_a_share_valuations_snapshot"
+              },
+              {
+                "metric": "pcf",
+                "status": "pass",
+                "field": "pcf_ttm",
+                "asOf": "2026-10-20T03:20:04.000Z",
+                "unit": "倍",
+                "quality": "ok",
+                "requestId": "e82195e511c64b7d96d00d7ed2c247f2",
+                "tool": "get_a_share_valuations_snapshot"
+              }
+            ]
+          }
+        ],
+        "stages": [
+          {
+            "name": "AI解析",
+            "state": "passed"
+          },
+          {
+            "name": "金融数据",
+            "state": "passed"
+          },
+          {
+            "name": "确定性筛选",
+            "state": "passed"
+          },
+          {
+            "name": "证据核查",
+            "state": "partial"
+          }
+        ]
+      },
+      {
+        "caseId": "trend",
+        "title": "趋势与回撤",
+        "state": "passed",
+        "engine": "model",
+        "model": "deepseek-flash",
+        "modelRequestId": "d6e6b253-72c0-42df-8871-8f6ea337c7c2",
+        "conditions": [
+          {
+            "id": "c1",
+            "metric": "return20",
+            "op": ">",
+            "value": 0,
+            "enabled": true
+          },
+          {
+            "id": "c2",
+            "metric": "drawdown20",
+            "op": "<=",
+            "value": 10,
+            "enabled": true
+          },
+          {
+            "id": "c3",
+            "metric": "ma20Deviation",
+            "op": ">",
+            "value": 0,
+            "enabled": true
+          },
+          {
+            "id": "c4",
+            "metric": "ma20Deviation",
+            "op": "<=",
+            "value": 8,
+            "enabled": true
+          }
+        ],
+        "counts": {
+          "pass": 4,
+          "fail": 0,
+          "unknown": 0,
+          "total": 4
+        },
+        "gaps": 0,
+        "stocks": [
+          {
+            "code": "000333.SZ",
+            "name": "美的集团",
+            "status": "pass",
+            "checks": [
+              {
+                "metric": "return20",
+                "status": "pass",
+                "field": "(close[-1]/close[-21]-1)*100",
+                "asOf": "2026-10-18T16:00:00.000Z",
+                "unit": "%",
+                "quality": "ok",
+                "requestId": "5d79e42646b44a7e84946ca50d18e177",
+                "tool": "get_a_share_prices_historical"
+              },
+              {
+                "metric": "drawdown20",
+                "status": "pass",
+                "field": "max((runningPeak-close)/runningPeak)*100",
+                "asOf": "2026-10-18T16:00:00.000Z",
+                "unit": "%",
+                "quality": "ok",
+                "requestId": "5d79e42646b44a7e84946ca50d18e177",
+                "tool": "get_a_share_prices_historical"
+              },
+              {
+                "metric": "ma20Deviation",
+                "status": "pass",
+                "field": "(close[-1]/mean(close[-20:])-1)*100",
+                "asOf": "2026-10-18T16:00:00.000Z",
+                "unit": "%",
+                "quality": "ok",
+                "requestId": "5d79e42646b44a7e84946ca50d18e177",
+                "tool": "get_a_share_prices_historical"
+              },
+              {
+                "metric": "ma20Deviation",
+                "status": "pass",
+                "field": "(close[-1]/mean(close[-20:])-1)*100",
+                "asOf": "2026-10-18T16:00:00.000Z",
+                "unit": "%",
+                "quality": "ok",
+                "requestId": "5d79e42646b44a7e84946ca50d18e177",
+                "tool": "get_a_share_prices_historical"
+              }
+            ]
+          },
+          {
+            "code": "000858.SZ",
+            "name": "五粮液",
+            "status": "pass",
+            "checks": [
+              {
+                "metric": "return20",
+                "status": "pass",
+                "field": "(close[-1]/close[-21]-1)*100",
+                "asOf": "2026-10-18T16:00:00.000Z",
+                "unit": "%",
+                "quality": "ok",
+                "requestId": "0c84f669ef1f47c78a8319f205c1e10e",
+                "tool": "get_a_share_prices_historical"
+              },
+              {
+                "metric": "drawdown20",
+                "status": "pass",
+                "field": "max((runningPeak-close)/runningPeak)*100",
+                "asOf": "2026-10-18T16:00:00.000Z",
+                "unit": "%",
+                "quality": "ok",
+                "requestId": "0c84f669ef1f47c78a8319f205c1e10e",
+                "tool": "get_a_share_prices_historical"
+              },
+              {
+                "metric": "ma20Deviation",
+                "status": "pass",
+                "field": "(close[-1]/mean(close[-20:])-1)*100",
+                "asOf": "2026-10-18T16:00:00.000Z",
+                "unit": "%",
+                "quality": "ok",
+                "requestId": "0c84f669ef1f47c78a8319f205c1e10e",
+                "tool": "get_a_share_prices_historical"
+              },
+              {
+                "metric": "ma20Deviation",
+                "status": "pass",
+                "field": "(close[-1]/mean(close[-20:])-1)*100",
+                "asOf": "2026-10-18T16:00:00.000Z",
+                "unit": "%",
+                "quality": "ok",
+                "requestId": "0c84f669ef1f47c78a8319f205c1e10e",
+                "tool": "get_a_share_prices_historical"
+              }
+            ]
+          },
+          {
+            "code": "600036.SH",
+            "name": "招商银行",
+            "status": "pass",
+            "checks": [
+              {
+                "metric": "return20",
+                "status": "pass",
+                "field": "(close[-1]/close[-21]-1)*100",
+                "asOf": "2026-10-18T16:00:00.000Z",
+                "unit": "%",
+                "quality": "ok",
+                "requestId": "2e4d92d41aad4b3d8bc7aab873baa904",
+                "tool": "get_a_share_prices_historical"
+              },
+              {
+                "metric": "drawdown20",
+                "status": "pass",
+                "field": "max((runningPeak-close)/runningPeak)*100",
+                "asOf": "2026-10-18T16:00:00.000Z",
+                "unit": "%",
+                "quality": "ok",
+                "requestId": "2e4d92d41aad4b3d8bc7aab873baa904",
+                "tool": "get_a_share_prices_historical"
+              },
+              {
+                "metric": "ma20Deviation",
+                "status": "pass",
+                "field": "(close[-1]/mean(close[-20:])-1)*100",
+                "asOf": "2026-10-18T16:00:00.000Z",
+                "unit": "%",
+                "quality": "ok",
+                "requestId": "2e4d92d41aad4b3d8bc7aab873baa904",
+                "tool": "get_a_share_prices_historical"
+              },
+              {
+                "metric": "ma20Deviation",
+                "status": "pass",
+                "field": "(close[-1]/mean(close[-20:])-1)*100",
+                "asOf": "2026-10-18T16:00:00.000Z",
+                "unit": "%",
+                "quality": "ok",
+                "requestId": "2e4d92d41aad4b3d8bc7aab873baa904",
+                "tool": "get_a_share_prices_historical"
+              }
+            ]
+          },
+          {
+            "code": "600519.SH",
+            "name": "贵州茅台",
+            "status": "pass",
+            "checks": [
+              {
+                "metric": "return20",
+                "status": "pass",
+                "field": "(close[-1]/close[-21]-1)*100",
+                "asOf": "2026-10-18T16:00:00.000Z",
+                "unit": "%",
+                "quality": "ok",
+                "requestId": "35f8c8b1c9a244bbb06d313effe316cf",
+                "tool": "get_a_share_prices_historical"
+              },
+              {
+                "metric": "drawdown20",
+                "status": "pass",
+                "field": "max((runningPeak-close)/runningPeak)*100",
+                "asOf": "2026-10-18T16:00:00.000Z",
+                "unit": "%",
+                "quality": "ok",
+                "requestId": "35f8c8b1c9a244bbb06d313effe316cf",
+                "tool": "get_a_share_prices_historical"
+              },
+              {
+                "metric": "ma20Deviation",
+                "status": "pass",
+                "field": "(close[-1]/mean(close[-20:])-1)*100",
+                "asOf": "2026-10-18T16:00:00.000Z",
+                "unit": "%",
+                "quality": "ok",
+                "requestId": "35f8c8b1c9a244bbb06d313effe316cf",
+                "tool": "get_a_share_prices_historical"
+              },
+              {
+                "metric": "ma20Deviation",
+                "status": "pass",
+                "field": "(close[-1]/mean(close[-20:])-1)*100",
+                "asOf": "2026-10-18T16:00:00.000Z",
+                "unit": "%",
+                "quality": "ok",
+                "requestId": "35f8c8b1c9a244bbb06d313effe316cf",
+                "tool": "get_a_share_prices_historical"
+              }
+            ]
+          }
+        ],
+        "stages": [
+          {
+            "name": "AI解析",
+            "state": "passed"
+          },
+          {
+            "name": "金融数据",
+            "state": "passed"
+          },
+          {
+            "name": "确定性筛选",
+            "state": "passed"
+          },
+          {
+            "name": "证据核查",
+            "state": "passed"
+          }
+        ]
+      }
+    ],
+    "accountSync": {
+      "state": "unavailable",
+      "reason": "当前授权仅支持金融数据读取，缺少目标账户写入及回读接口"
+    },
+    "cached": false
+  },
+  "passed": true,
+  "completedAt": "2026-10-20T03:20:20.924Z"
+}

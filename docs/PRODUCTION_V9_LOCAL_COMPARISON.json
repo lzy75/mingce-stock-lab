@@ -1,0 +1,9 @@
+{
+  "at": "2026-10-20T03:29:47.440Z",
+  "location": "local-direct",
+  "passed": true,
+  "tool": "get_a_share_prices_snapshot",
+  "businessCode": 0,
+  "count": 2,
+  "requestId": "fb02457bceaa465ba301f5212f5daa49"
+}

@@ -6,7 +6,11 @@
 
 **GitHub：** https://github.com/lzy75/mingce-stock-lab
 
-**最新验收（2026-10-20，第8版）：** [GitHub独立生产检查通过](https://github.com/lzy75/mingce-stock-lab/actions/runs/39358602909)：3组真实模型/MCP案例、10项公开HTTP检查、24只股票分两批读取均完成；现金流案例2项字段依据不足保留partial。92项自动回归、类型检查、生产构建与密钥扫描通过。[当前交付状态与历史失败](docs/DEPLOYMENT.md) · [SuperMind具体操作](docs/SUPERMIND_GUIDE.md)。
+**第9版更新（2026-10-20）：** 100项自动测试通过；SuperMind官方Skill远端实际验证产品生成脚本的新建、回读、重复执行和同名冲突拒绝。[远端证据](docs/SUPERMIND_REMOTE_ACCEPTANCE.json)。研究板块写入已验证，客户端同步依用户反馈未通过，网页一键账户写入尚未实现；[差异排查单](docs/SUPERMIND_SYNC_DIAGNOSTIC.md)。最新发布与生产复测见[交付状态](docs/DEPLOYMENT.md)。
+
+**当前生产限制：** 第9版最新独立复测遇到扶摇MCP超时/HTTP522，AI与输入边界通过，真实数据链路未通过；不能用第8版历史通过记录代替当前可用性。产品失败时不生成新的正常名单。[实际失败产物](docs/PRODUCTION_V9_FINAL_HTTP.json)。
+
+**历史验收（2026-10-20，第8版）：** [GitHub独立生产检查通过](https://github.com/lzy75/mingce-stock-lab/actions/runs/39358602909)：3组真实模型/MCP案例、10项公开HTTP检查、24只股票分两批读取均完成；现金流案例2项字段依据不足保留partial。92项自动回归、类型检查、生产构建与密钥扫描通过。[当前交付状态与历史失败](docs/DEPLOYMENT.md) · [SuperMind具体操作](docs/SUPERMIND_GUIDE.md)。
 
 ## 快速体验
 1. 首屏只有一个宽大的策略输入框，选择6类研究场景或描述模糊偏好；条件核对、名单和原始证据依次在下方。
