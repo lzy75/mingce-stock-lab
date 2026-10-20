@@ -40,8 +40,15 @@ async function call(name, path, body, inspect) {
       name,
       http: r.status,
       ms: Date.now() - start,
-      passed: r.ok && result.passed,
       ...result,
+      passed: r.ok && result.passed,
+      ...(!r.ok
+        ? {
+            reason: data.error ?? "应用请求失败",
+            code: data.code,
+            requestId: data.requestId,
+          }
+        : {}),
     });
     return r.ok ? data : null;
   } catch (e) {

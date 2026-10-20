@@ -89,6 +89,27 @@ test("MCP业务错误不会伪装成成功", async () => {
   );
   await assert.rejects(() => client.init(), /失败/);
 });
+test("MCP 域名解析错误保留诊断编号，不回传上游原文或密钥", async () => {
+  const client = new FuyaoMcp(
+    "private-test-key",
+    async () =>
+      new Response(
+        "error code: 1016 <html>private-test-key upstream details</html>",
+        { status: 530, headers: { "cf-ray": "test-ray" } },
+      ),
+  );
+  await assert.rejects(
+    () => client.init(),
+    (error) => {
+      assert.equal(error.code, "MCP_HTTP_530");
+      assert.equal(error.requestId, "test-ray");
+      assert.match(error.message, /域名解析异常（1016）/);
+      assert.ok(!error.message.includes("private-test-key"));
+      assert.ok(!error.message.includes("upstream details"));
+      return true;
+    },
+  );
+});
 test("所有推演示例的预期与实际一致", () => {
   for (const id of [
     "balanced",

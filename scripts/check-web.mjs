@@ -1,4 +1,5 @@
-import { writeFile } from "node:fs/promises";
+import { writeFile, mkdir } from "node:fs/promises";
+import { dirname } from "node:path";
 const base = (process.env.MINGCE_TEST_URL || "http://127.0.0.1:5173").replace(
   /\/$/,
   "",
@@ -47,8 +48,11 @@ async function call(name, path, body, expected, inspect, headers = {}) {
       at,
       http: r.status,
       ms: Date.now() - start,
-      passed: r.status === expected && detail.passed !== false,
       ...detail,
+      passed: r.status === expected && detail.passed !== false,
+      ...(r.status !== expected && data.error
+        ? { reason: data.error, code: data.code }
+        : {}),
     });
     return data;
   } catch {
@@ -176,6 +180,7 @@ const report = {
   checks,
 };
 const file = process.env.MINGCE_TEST_REPORT || "docs/HTTP_VALIDATION.json";
+await mkdir(dirname(file), { recursive: true });
 await writeFile(file, JSON.stringify(report, null, 2));
 console.log(JSON.stringify(report, null, 2));
 process.exitCode = report.passed ? 0 : 1;

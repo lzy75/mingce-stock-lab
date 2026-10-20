@@ -4,6 +4,22 @@ type Rpc = {
   error?: { code?: number; message?: string };
   id?: number;
 };
+export class McpHttpError extends Error {
+  code: string;
+  requestId?: string;
+  constructor(status: number, requestId?: string, edgeCode?: string) {
+    const hint =
+      status === 530
+        ? `，上游域名解析异常${edgeCode ? `（${edgeCode}）` : ""}，请稍后重试`
+        : status === 429
+          ? "，请稍后重试"
+          : "";
+    super(`扶摇MCP HTTP ${status}${hint}`);
+    this.name = "McpHttpError";
+    this.code = "MCP_HTTP_" + status;
+    this.requestId = requestId;
+  }
+}
 export function decodeRpc(text: string): Rpc {
   if (text.trim().startsWith("{")) return JSON.parse(text);
   for (const event of text.split(/\r?\n\r?\n/).reverse()) {
@@ -57,10 +73,19 @@ export class FuyaoMcp {
       }),
       signal: AbortSignal.timeout(20000),
     });
-    if (!response.ok)
-      throw new Error(
-        `扶摇MCP HTTP ${response.status}${response.status === 429 ? "，请稍后重试" : ""}`,
+    if (!response.ok) {
+      // Keep only diagnostic codes; never return upstream HTML, headers or credentials.
+      let edgeCode: string | undefined;
+      if (response.status === 530) {
+        const body = await response.text();
+        edgeCode = /\b(?:error code:\s*|Error\s+)(1\d{3})\b/i.exec(body)?.[1];
+      }
+      throw new McpHttpError(
+        response.status,
+        response.headers.get("cf-ray") ?? undefined,
+        edgeCode,
       );
+    }
     const session = response.headers.get("mcp-session-id");
     if (session) this.session = session;
     if (notification) return {};

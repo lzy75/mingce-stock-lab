@@ -2,6 +2,7 @@ import { POST as parsePost } from "../parse/route";
 import { gate, json, readBody, RequestError } from "@/lib/http";
 import { serverEnv } from "@/lib/runtime-env";
 import { loadMarket } from "@/lib/fuyao";
+import { McpHttpError } from "@/lib/mcp-client";
 import { METRICS, type Metric, type ParsedIntent } from "@/lib/domain";
 import { researchScenarios, CASE_CODES } from "@/lib/scenarios";
 import { verifyCase } from "@/lib/verification";
@@ -99,7 +100,10 @@ export async function POST(request: Request) {
     return json(
       {
         error: error instanceof Error ? error.message : "真实案例验收失败",
-        code: "ACCEPTANCE_FAILED",
+        code: error instanceof McpHttpError ? error.code : "ACCEPTANCE_FAILED",
+        ...(error instanceof McpHttpError
+          ? { requestId: error.requestId ?? null }
+          : {}),
       },
       502,
     );

@@ -15,11 +15,13 @@ jobs:
       - name: Verify actual public origin and real cases
         run: node scripts/verify-production.mjs
       - name: Verify public AI/data endpoints and failure boundaries
+        if: ${{ !cancelled() }}
         run: node scripts/check-web.mjs
         env:
           MINGCE_TEST_URL: https://mingce-stock-lab.justslug1.chatgpt.site
           MINGCE_TEST_REPORT: artifacts/production-http.json
       - name: Verify 24-stock pool across multiple requests
+        if: ${{ !cancelled() }}
         run: node scripts/verify-pool.mjs
       - uses: actions/upload-artifact@v4
         if: always()
