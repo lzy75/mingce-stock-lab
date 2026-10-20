@@ -87,3 +87,6 @@ GitHub Actions真实通过：https://github.com/lzy75/mingce-stock-lab/actions/r
 92项自动测试通过，包括验收脚本HTTP失败不可被内容覆盖、上游错误摘要保留、独立创建报告目录，以及MCP530只透传诊断编号而不泄漏上游原文。TypeScript检查通过。
 
 第7版两次独立生产案例验收因扶摇MCP HTTP530失败。旧版通过记录仅作历史证据。生产工作流现让案例、HTTP边界、24只分批各自执行；任何失败都会保留工作流失败，避免AI/数据检查互相掩盖。实际最终状态见DEPLOYMENT.md及对应JSON。
+
+## SuperMind人工账户测试（2026-10-20）
+用户先只读查询得到空DataFrame，随后新建随机命名的独立测试板块；insert返回True，按名称回读得到Series，名称与000001.SZ、600519.SH两只固定样本一致。本次人工创建/回读通过，不计入92项自动测试，不证明网页一键同步已实现。未记录账户身份；脱敏元数据见SUPERMIND_MANUAL_ACCEPTANCE.json。重复执行、客户端互通及真实筛选名单脚本仍待验证。
