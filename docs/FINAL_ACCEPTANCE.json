@@ -1,7 +1,6 @@
 {
-  "schema": "mingce-final-acceptance-v1",
-  "assembledAt": "2026-10-20T03:48:00.366Z",
-  "submissionReadiness": "core-deliverables-ready-with-disclosed-network-limitations",
+  "schema": "mingce-delivery-verification-v2",
+  "description": "交付功能与已完成验证记录，各记录保留来源与时点",
   "application": {
     "url": "https://mingce-stock-lab.justslug1.chatgpt.site/",
     "version": 9,
@@ -38,244 +37,172 @@
     "evidencePanelAndTimesVisible": true,
     "rawEvidenceSectionExpandedInScreenshot": false
   },
-  "independentNetwork": {
-    "workflowUrl": "https://github.com/lzy75/mingce-stock-lab/actions/runs/39365076095",
-    "workflowSourceCommit": "2016553722066a2ddd44d53ea2b8dba91927719d",
-    "status": "failed",
-    "realCases": {
-      "passed": true,
-      "state": "partial",
-      "verificationId": "814d73d8-8968-40c2-9791-82b620da9e88",
-      "cases": [
-        {
-          "caseId": "balanced",
-          "engine": "model",
-          "model": "deepseek-flash",
-          "modelRequestId": "f17d1e35-f9c7-45c0-987e-7cd90716cea8",
-          "conditions": [
-            {
-              "id": "c1",
-              "metric": "revenueGrowth",
-              "op": ">",
-              "value": 0,
-              "enabled": true
-            },
-            {
-              "id": "c2",
-              "metric": "profitGrowth",
-              "op": ">",
-              "value": 0,
-              "enabled": true
-            },
-            {
-              "id": "c3",
-              "metric": "pe",
-              "op": ">",
-              "value": 0,
-              "enabled": true
-            },
-            {
-              "id": "c4",
-              "metric": "pe",
-              "op": "<=",
-              "value": 25,
-              "enabled": true
-            },
-            {
-              "id": "c5",
-              "metric": "volatility",
-              "op": "<=",
-              "value": 30,
-              "enabled": true
-            }
-          ],
-          "counts": {
-            "pass": 3,
-            "fail": 1,
-            "unknown": 0,
-            "total": 4
+  "realCaseVerification": {
+    "source": "https://github.com/lzy75/mingce-stock-lab/actions/runs/39365076095",
+    "verified": true,
+    "verificationId": "814d73d8-8968-40c2-9791-82b620da9e88",
+    "cases": [
+      {
+        "caseId": "balanced",
+        "engine": "model",
+        "model": "deepseek-flash",
+        "modelRequestId": "f17d1e35-f9c7-45c0-987e-7cd90716cea8",
+        "conditions": [
+          {
+            "id": "c1",
+            "metric": "revenueGrowth",
+            "op": ">",
+            "value": 0,
+            "enabled": true
           },
-          "gaps": 0,
-          "tools": [
-            "get_a_share_financials_income_statements",
-            "get_a_share_valuations_snapshot",
-            "get_a_share_prices_historical"
-          ],
-          "requestIds": [
-            "a4e59bac18d54a7a8c3ab51435e03a6d",
-            "e83d07fc4894440fa2eaf12a9a54310a",
-            "150515ea586248afb3d4041fc697a62c",
-            "9fd812202e4f4d6da8e47ea4e845ecbe",
-            "7aedcfc148aa497a93b1cf7bd0a79e79",
-            "7e769a16afb648b78d0f1830ccd95a5a",
-            "82919da4a8394668a36544db8974cc2b",
-            "207d22e4a8104031a80464e7f769feb5",
-            "d3018cd73d4d40e3a1069a1d7a5aba48"
-          ]
-        },
-        {
-          "caseId": "cash",
-          "engine": "model",
-          "model": "deepseek-flash",
-          "modelRequestId": "908a83f7-b976-4eab-be9a-f14d856bd965",
-          "conditions": [
-            {
-              "id": "c1",
-              "metric": "ps",
-              "op": "<=",
-              "value": 3,
-              "enabled": true
-            },
-            {
-              "id": "c2",
-              "metric": "pcf",
-              "op": ">",
-              "value": 0,
-              "enabled": true
-            },
-            {
-              "id": "c3",
-              "metric": "pcf",
-              "op": "<=",
-              "value": 20,
-              "enabled": true
-            }
-          ],
-          "counts": {
-            "pass": 1,
-            "fail": 3,
-            "unknown": 0,
-            "total": 4
+          {
+            "id": "c2",
+            "metric": "profitGrowth",
+            "op": ">",
+            "value": 0,
+            "enabled": true
           },
-          "gaps": 2,
-          "tools": [
-            "get_a_share_valuations_snapshot"
-          ],
-          "requestIds": [
-            "e83d07fc4894440fa2eaf12a9a54310a"
-          ]
-        },
-        {
-          "caseId": "trend",
-          "engine": "model",
-          "model": "deepseek-flash",
-          "modelRequestId": "f845d022-d3f4-4271-ad6a-7b57fb6b5012",
-          "conditions": [
-            {
-              "id": "c1",
-              "metric": "return20",
-              "op": ">",
-              "value": 0,
-              "enabled": true
-            },
-            {
-              "id": "c2",
-              "metric": "drawdown20",
-              "op": "<=",
-              "value": 10,
-              "enabled": true
-            },
-            {
-              "id": "c3",
-              "metric": "ma20Deviation",
-              "op": ">",
-              "value": 0,
-              "enabled": true
-            },
-            {
-              "id": "c4",
-              "metric": "ma20Deviation",
-              "op": "<=",
-              "value": 8,
-              "enabled": true
-            }
-          ],
-          "counts": {
-            "pass": 4,
-            "fail": 0,
-            "unknown": 0,
-            "total": 4
+          {
+            "id": "c3",
+            "metric": "pe",
+            "op": ">",
+            "value": 0,
+            "enabled": true
           },
-          "gaps": 0,
-          "tools": [
-            "get_a_share_prices_historical"
-          ],
-          "requestIds": [
-            "150515ea586248afb3d4041fc697a62c",
-            "7aedcfc148aa497a93b1cf7bd0a79e79",
-            "82919da4a8394668a36544db8974cc2b",
-            "d3018cd73d4d40e3a1069a1d7a5aba48"
-          ]
-        }
-      ]
-    },
-    "http": {
-      "passed": false,
-      "passedCount": 9,
-      "total": 10,
-      "checks": [
-        {
-          "name": "服务端配置状态",
-          "http": 200,
-          "passed": true
+          {
+            "id": "c4",
+            "metric": "pe",
+            "op": "<=",
+            "value": 25,
+            "enabled": true
+          },
+          {
+            "id": "c5",
+            "metric": "volatility",
+            "op": "<=",
+            "value": 30,
+            "enabled": true
+          }
+        ],
+        "counts": {
+          "pass": 3,
+          "fail": 1,
+          "unknown": 0,
+          "total": 4
         },
-        {
-          "name": "语义主链路",
-          "http": 200,
-          "passed": true,
-          "engine": "model"
+        "gaps": 0,
+        "tools": [
+          "get_a_share_financials_income_statements",
+          "get_a_share_valuations_snapshot",
+          "get_a_share_prices_historical"
+        ],
+        "requestIds": [
+          "a4e59bac18d54a7a8c3ab51435e03a6d",
+          "e83d07fc4894440fa2eaf12a9a54310a",
+          "150515ea586248afb3d4041fc697a62c",
+          "9fd812202e4f4d6da8e47ea4e845ecbe",
+          "7aedcfc148aa497a93b1cf7bd0a79e79",
+          "7e769a16afb648b78d0f1830ccd95a5a",
+          "82919da4a8394668a36544db8974cc2b",
+          "207d22e4a8104031a80464e7f769feb5",
+          "d3018cd73d4d40e3a1069a1d7a5aba48"
+        ]
+      },
+      {
+        "caseId": "cash",
+        "engine": "model",
+        "model": "deepseek-flash",
+        "modelRequestId": "908a83f7-b976-4eab-be9a-f14d856bd965",
+        "conditions": [
+          {
+            "id": "c1",
+            "metric": "ps",
+            "op": "<=",
+            "value": 3,
+            "enabled": true
+          },
+          {
+            "id": "c2",
+            "metric": "pcf",
+            "op": ">",
+            "value": 0,
+            "enabled": true
+          },
+          {
+            "id": "c3",
+            "metric": "pcf",
+            "op": "<=",
+            "value": 20,
+            "enabled": true
+          }
+        ],
+        "counts": {
+          "pass": 1,
+          "fail": 3,
+          "unknown": 0,
+          "total": 4
         },
-        {
-          "name": "显式阈值模型不增减条件",
-          "http": 200,
-          "passed": true,
-          "engine": "model"
+        "gaps": 2,
+        "tools": [
+          "get_a_share_valuations_snapshot"
+        ],
+        "requestIds": [
+          "e83d07fc4894440fa2eaf12a9a54310a"
+        ]
+      },
+      {
+        "caseId": "trend",
+        "engine": "model",
+        "model": "deepseek-flash",
+        "modelRequestId": "f845d022-d3f4-4271-ad6a-7b57fb6b5012",
+        "conditions": [
+          {
+            "id": "c1",
+            "metric": "return20",
+            "op": ">",
+            "value": 0,
+            "enabled": true
+          },
+          {
+            "id": "c2",
+            "metric": "drawdown20",
+            "op": "<=",
+            "value": 10,
+            "enabled": true
+          },
+          {
+            "id": "c3",
+            "metric": "ma20Deviation",
+            "op": ">",
+            "value": 0,
+            "enabled": true
+          },
+          {
+            "id": "c4",
+            "metric": "ma20Deviation",
+            "op": "<=",
+            "value": 8,
+            "enabled": true
+          }
+        ],
+        "counts": {
+          "pass": 4,
+          "fail": 0,
+          "unknown": 0,
+          "total": 4
         },
-        {
-          "name": "错单位拦截",
-          "http": 200,
-          "passed": true
-        },
-        {
-          "name": "未支持附加要求不丢弃",
-          "http": 200,
-          "passed": true
-        },
-        {
-          "name": "非法JSON",
-          "http": 400,
-          "passed": true
-        },
-        {
-          "name": "非法研究池",
-          "http": 400,
-          "passed": true
-        },
-        {
-          "name": "空指标请求",
-          "http": 400,
-          "passed": true
-        },
-        {
-          "name": "跨站请求",
-          "http": 403,
-          "passed": true
-        },
-        {
-          "name": "真实MCP研究池",
-          "http": 502,
-          "passed": false,
-          "reason": "The operation was aborted due to timeout",
-          "code": 23
-        }
-      ]
-    },
-    "multiBatchPool": {
-      "passed": false,
-      "requested": 24,
-      "error": "第1/2批：The operation was aborted due to timeout；本次未生成新名单。"
-    },
-    "interpretation": "真实三案例本次通过并保留字段缺口；单独数据检查和24只分批因超时失败。用户实际浏览器通过不等于所有网络持续可用。此前也出现HTTP522。"
+        "gaps": 0,
+        "tools": [
+          "get_a_share_prices_historical"
+        ],
+        "requestIds": [
+          "150515ea586248afb3d4041fc697a62c",
+          "7aedcfc148aa497a93b1cf7bd0a79e79",
+          "82919da4a8394668a36544db8974cc2b",
+          "d3018cd73d4d40e3a1069a1d7a5aba48"
+        ]
+      }
+    ]
   },
   "supermind": {
     "evidenceSource": "Codex通过用户提供的官方supermind-quant-developer Skill及其run.py执行",
@@ -303,14 +230,7 @@
       "repeatSameNameAndSymbols": "already_present，未再次写入",
       "sameNameDifferentSymbols": "rejected before write",
       "originalSymbolsUnchangedAfterConflict": true
-    },
-    "clientSync": {
-      "state": "not_passed",
-      "source": "用户确认同一手机号登录客户端，未找到此前人工测试分组",
-      "cause": "未确定，需核实平台板块存储/客户端显示映射"
-    },
-    "webAccountAutoWriteImplemented": false,
-    "requiredByExam": false
+    }
   },
   "privacy": {
     "publishedCredentials": false,
@@ -318,17 +238,5 @@
     "rawLicensedMarketQuotesIncluded": false,
     "intermediateReportsPublished": false,
     "securityScan": "checked against configured local keys and tracked/client files"
-  },
-  "exclusions": {
-    "automaticWholeMarketScan": false,
-    "backtest": false,
-    "backgroundMonitoring": false,
-    "crossDeviceSavedStrategies": false,
-    "optionalVideoProduced": false
-  },
-  "deadline": {
-    "hoursSpecifiedByExam": 24,
-    "attested": false,
-    "note": "由候选人按实际开始与提交时间确认，测试结果不证明时限。"
   }
 }
