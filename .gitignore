@@ -61,3 +61,8 @@ next-env.d.ts
 /work/
 
 /artifacts/
+
+# Keep intermediate probes local; publish only the final acceptance record.
+/docs/*.json
+!/docs/FINAL_ACCEPTANCE.json
+/docs/*.tap

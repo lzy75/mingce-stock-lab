@@ -1,5 +1,5 @@
 import { spawnSync } from "node:child_process";
-import { writeFileSync, readdirSync } from "node:fs";
+import { writeFileSync, readdirSync, mkdirSync } from "node:fs";
 const startedAt = new Date().toISOString();
 const r = spawnSync(
   process.execPath,
@@ -13,6 +13,7 @@ const r = spawnSync(
   { encoding: "utf8" },
 );
 const report = `# Test run started: ${startedAt}\n# Command: node --test tests/*.test.mjs\n${r.stdout}${r.stderr}\n# Exit code: ${r.status}\n# Finished: ${new Date().toISOString()}\n`;
-writeFileSync("docs/test-results.tap", report);
+mkdirSync("artifacts", { recursive: true });
+writeFileSync("artifacts/test-results.tap", report);
 process.stdout.write(report);
 process.exit(r.status ?? 1);

@@ -71,9 +71,6 @@ const report = {
   snapshotSummary,
   note: "No credentials or full licensed raw responses are stored. Only integration-validation metadata and selected derived values.",
 };
-await mkdir("docs", { recursive: true });
-await writeFile(
-  "docs/DATA_VALIDATION.local.json",
-  JSON.stringify(report, null, 2),
-);
+await mkdir("artifacts", { recursive: true });
+await writeFile("artifacts/data.local.json", JSON.stringify(report, null, 2));
 console.log(JSON.stringify(report, null, 2));

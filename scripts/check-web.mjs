@@ -179,7 +179,7 @@ const report = {
   passed: checks.every((c) => c.passed),
   checks,
 };
-const file = process.env.MINGCE_TEST_REPORT || "docs/HTTP_VALIDATION.json";
+const file = process.env.MINGCE_TEST_REPORT || "artifacts/http.json";
 await mkdir(dirname(file), { recursive: true });
 await writeFile(file, JSON.stringify(report, null, 2));
 console.log(JSON.stringify(report, null, 2));
